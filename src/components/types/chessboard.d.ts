@@ -44,7 +44,7 @@ export interface Coordinates {
 }
 
 export type Evaluation = {
-  winning: PieceColor | "equal";
+  winning: PieceColor | 'equal';
   whiteMaterialDifference: number;
   blackMaterialDifference: number;
 };

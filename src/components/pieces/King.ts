@@ -5,7 +5,12 @@ import {
 } from '../types/pieces';
 import { WhiteKing } from '../icons/white-king';
 import { BlackKing } from '../icons/black-king';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { Coordinates } from '../types/chessboard';
 import { isSquareAttacked } from '../utils/utils';
 
@@ -63,7 +68,7 @@ export class King extends Piece {
     }
 
     if (!this.hasMoved) {
-      const rank: "1" | "8" = this.color === 'white' ? '1' : '8';
+      const rank: '1' | '8' = this.color === 'white' ? '1' : '8';
       const kingSideTarget: PiecePositionAlgebraic = `G${rank}`;
       const queenSideTarget: PiecePositionAlgebraic = `C${rank}`;
 
@@ -98,15 +103,17 @@ export class King extends Piece {
     }
 
     return moves;
-  };
+  }
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   ): Array<PiecePositionAlgebraic> {
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
-    const opponentColor: PieceColor = this.color === 'white' ? 'black' : 'white';
-    const rank: "1" | "8" = this.color === 'white' ? '1' : '8';
+    const opponentColor: PieceColor =
+      this.color === 'white' ? 'black' : 'white';
+    const rank: '1' | '8' = this.color === 'white' ? '1' : '8';
     const kingSideCastleTarget: PiecePositionAlgebraic = `G${rank}`;
     const queenSideCastleTarget: PiecePositionAlgebraic = `C${rank}`;
 
@@ -132,9 +139,8 @@ export class King extends Piece {
       }
     }
 
-    const canPotentiallyCastleKingSide: boolean = potentialMoves.includes(
-      kingSideCastleTarget
-    );
+    const canPotentiallyCastleKingSide: boolean =
+      potentialMoves.includes(kingSideCastleTarget);
     const canPotentiallyCastleQueenSide: boolean = potentialMoves.includes(
       queenSideCastleTarget
     );
@@ -185,12 +191,12 @@ export class King extends Piece {
       }
     }
     return validMoves;
-  };
+  }
 
   clone(): this {
     const clonedPiece = new King(this.color, this.position);
     clonedPiece.hasMoved = this.hasMoved;
     clonedPiece.captured = this.captured;
     return clonedPiece as this;
-  };
+  }
 }

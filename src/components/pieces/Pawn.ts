@@ -1,11 +1,15 @@
 import {
-  PawnDirection,
   PieceColor,
   PiecePositionAlgebraic,
 } from '../types/pieces';
 import { WhitePawn } from '../icons/white-pawn';
 import { BlackPawn } from '../icons/black-pawn';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { Coordinates } from '../types/chessboard';
 
 export class Pawn extends Piece {
@@ -27,7 +31,9 @@ export class Pawn extends Piece {
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   ): Array<PiecePositionAlgebraic> {
     const moves: Array<PiecePositionAlgebraic> = [];
-    const currentCoords: Coordinates | null = positionToCoordinates(this.position);
+    const currentCoords: Coordinates | null = positionToCoordinates(
+      this.position
+    );
     if (!currentCoords) return [];
 
     const direction: 1 | -1 = this.color === 'white' ? 1 : -1;
@@ -38,7 +44,8 @@ export class Pawn extends Piece {
       rankIndex: currentCoords.rankIndex + direction,
     };
     if (isOnBoard(oneStepCoords)) {
-      const oneStepPosition: PiecePositionAlgebraic | null = coordinatesToPosition(oneStepCoords);
+      const oneStepPosition: PiecePositionAlgebraic | null =
+        coordinatesToPosition(oneStepCoords);
       if (oneStepPosition && !pieceMap[oneStepPosition]) {
         moves.push(oneStepPosition);
 
@@ -48,7 +55,8 @@ export class Pawn extends Piece {
             rankIndex: currentCoords.rankIndex + 2 * direction,
           };
           if (isOnBoard(twoStepsCoords)) {
-            const twoStepsPosition: PiecePositionAlgebraic | null = coordinatesToPosition(twoStepsCoords);
+            const twoStepsPosition: PiecePositionAlgebraic | null =
+              coordinatesToPosition(twoStepsCoords);
             if (twoStepsPosition && !pieceMap[twoStepsPosition]) {
               moves.push(twoStepsPosition);
             }
@@ -65,7 +73,8 @@ export class Pawn extends Piece {
       };
 
       if (isOnBoard(captureCoords)) {
-        const capturePosition: PiecePositionAlgebraic | null = coordinatesToPosition(captureCoords);
+        const capturePosition: PiecePositionAlgebraic | null =
+          coordinatesToPosition(captureCoords);
         if (capturePosition) {
           const targetPiece: Piece | undefined = pieceMap[capturePosition];
           if (targetPiece && targetPiece.color !== this.color) {
@@ -75,29 +84,34 @@ export class Pawn extends Piece {
       }
     }
     return moves;
-  };
+  }
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
     ownKingPosition: PiecePositionAlgebraic | null,
-    enPassantTarget: PiecePositionAlgebraic | null,
+    enPassantTarget: PiecePositionAlgebraic | null
   ): Array<PiecePositionAlgebraic> {
     if (!ownKingPosition) {
       console.error('Cannot get valid pawn moves without own king position.');
       return [];
     }
 
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
-    const opponentColor: PieceColor = this.color === 'white' ? 'black' : 'white';
-    const currentCoords: Coordinates | null = positionToCoordinates(this.position);
+    const opponentColor: PieceColor =
+      this.color === 'white' ? 'black' : 'white';
+    const currentCoords: Coordinates | null = positionToCoordinates(
+      this.position
+    );
     if (!currentCoords) return [];
 
     const direction: 1 | -1 = this.color === 'white' ? 1 : -1;
 
     let potentialEnPassantMove: PiecePositionAlgebraic | null = null;
     if (enPassantTarget) {
-      const targetCoords: Coordinates | null = positionToCoordinates(enPassantTarget);
+      const targetCoords: Coordinates | null =
+        positionToCoordinates(enPassantTarget);
       if (targetCoords) {
         if (
           targetCoords.rankIndex === currentCoords.rankIndex + direction &&
@@ -135,10 +149,12 @@ export class Pawn extends Piece {
 
       let kingIsAttacked = false;
       for (const pos in tempPieceMap) {
-        const attackerPiece: Piece | undefined = tempPieceMap[pos as PiecePositionAlgebraic];
+        const attackerPiece: Piece | undefined =
+          tempPieceMap[pos as PiecePositionAlgebraic];
 
         if (attackerPiece && attackerPiece.color === opponentColor) {
-          const attacks: Array<PiecePositionAlgebraic> = attackerPiece.getPotentialMoves(tempPieceMap);
+          const attacks: Array<PiecePositionAlgebraic> =
+            attackerPiece.getPotentialMoves(tempPieceMap);
           if (attacks.includes(ownKingPosition)) {
             kingIsAttacked = true;
             break;
@@ -150,12 +166,12 @@ export class Pawn extends Piece {
       }
     }
     return validMoves;
-  };
+  }
 
   clone(): this {
     const clonedPiece = new Pawn(this.color, this.position);
     clonedPiece.hasMoved = this.hasMoved;
     clonedPiece.captured = this.captured;
     return clonedPiece as this;
-  };
+  }
 }

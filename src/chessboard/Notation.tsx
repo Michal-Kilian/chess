@@ -1,15 +1,19 @@
 import { Component, For, Match, Switch } from 'solid-js';
-import { ChessboardNotation, FileId, RankId } from '../components/types/chessboard';
+import {
+  ChessboardNotation,
+  FileId,
+  RankId,
+} from '../components/types/chessboard';
 
 interface NotationProps {
   notation?: ChessboardNotation;
-  side: "horizontal" | "vertical";
+  side: 'horizontal' | 'vertical';
 }
 
 export const Notation: Component<NotationProps> = (props: NotationProps) => {
   return (
     <Switch>
-      <Match when={props.side === "vertical"}>
+      <Match when={props.side === 'vertical'}>
         <div class="absolute top-0 left-[-20px] w-fit h-full flex flex-col items-center justify-center">
           <For each={props.notation?.ranks}>
             {(rank: RankId) => (
@@ -21,7 +25,7 @@ export const Notation: Component<NotationProps> = (props: NotationProps) => {
         </div>
       </Match>
 
-      <Match when={props.side === "horizontal"}>
+      <Match when={props.side === 'horizontal'}>
         <div class="absolute bottom-[-25px] left-0 h-fit w-full flex flex-row items-center justify-center">
           <For each={props.notation?.files}>
             {(file: FileId) => (

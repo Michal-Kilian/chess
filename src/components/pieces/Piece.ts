@@ -89,12 +89,12 @@ export abstract class Piece {
   abstract clone(): this;
 
   abstract getPotentialMoves(
-    pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
+    pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   ): Array<PiecePositionAlgebraic>;
 
   abstract getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
     ownKingPosition: PiecePositionAlgebraic,
-    enPassantTarget?: PiecePositionAlgebraic | null,
-  ): Array<PiecePositionAlgebraic>
+    enPassantTarget?: PiecePositionAlgebraic | null
+  ): Array<PiecePositionAlgebraic>;
 }

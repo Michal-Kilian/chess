@@ -4,7 +4,8 @@ import {
   createEffect,
   createSignal,
   For,
-  onMount, Setter,
+  onMount,
+  Setter,
 } from 'solid-js';
 import {
   ChessboardNotation,
@@ -13,15 +14,28 @@ import {
 } from '../components/types/chessboard';
 import { PieceColor, PiecePositionAlgebraic } from '../components/types/pieces';
 import { Dynamic } from 'solid-js/web';
-import { coordinatesToPosition, Piece, positionToCoordinates } from '../components/pieces/Piece';
-import { findKingPosition, getInitialSquares, getNotation, togglePieceColor } from '../components/utils/utils';
+import {
+  coordinatesToPosition,
+  Piece,
+  positionToCoordinates,
+} from '../components/pieces/Piece';
+import {
+  findKingPosition,
+  getInitialSquares,
+  getNotation,
+  togglePieceColor,
+} from '../components/utils/utils';
 import { SquareOverlay } from '../components/square-overlay';
 import { Notation } from './Notation';
 
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
-  pieceMap: Accessor<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>;
-  setPieceMap: Setter<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>;
+  pieceMap: Accessor<
+    Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
+  >;
+  setPieceMap: Setter<
+    Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
+  >;
   capturedWhitePieces: Accessor<Array<Piece>>;
   setCapturedWhitePieces: Setter<Array<Piece>>;
   capturedBlackPieces: Accessor<Array<Piece>>;
@@ -43,17 +57,18 @@ export const Chessboard: Component<ChessboardProps> = ({
     undefined
   );
 
-  const [whiteKingPosition, setWhiteKingPosition] = createSignal<
-    PiecePositionAlgebraic | null
-  >(findKingPosition(pieceMap(), 'white'));
-  const [blackKingPosition, setBlackKingPosition] = createSignal<
-    PiecePositionAlgebraic | null
-  >(findKingPosition(pieceMap(), 'black'));
+  const [whiteKingPosition, setWhiteKingPosition] =
+    createSignal<PiecePositionAlgebraic | null>(
+      findKingPosition(pieceMap(), 'white')
+    );
+  const [blackKingPosition, setBlackKingPosition] =
+    createSignal<PiecePositionAlgebraic | null>(
+      findKingPosition(pieceMap(), 'black')
+    );
 
-  const [turn, setTurn] = createSignal<PieceColor>("white");
-  const [enPassantTarget, setEnPassantTarget] = createSignal<
-    PiecePositionAlgebraic | null
-  >(null);
+  const [turn, setTurn] = createSignal<PieceColor>('white');
+  const [enPassantTarget, setEnPassantTarget] =
+    createSignal<PiecePositionAlgebraic | null>(null);
 
   onMount(() => {
     setBoard(getInitialSquares());
@@ -66,7 +81,8 @@ export const Chessboard: Component<ChessboardProps> = ({
 
   const handleSquareClick = (square: Square) => {
     const clickedPosition: PiecePositionAlgebraic = `${square.file}${square.rank}`;
-    const pieceOnClickedSquare = (): Piece | undefined => pieceMap()[clickedPosition];
+    const pieceOnClickedSquare = (): Piece | undefined =>
+      pieceMap()[clickedPosition];
     const currentSelectedPiece = (): Piece | undefined => selectedPiece();
 
     if (currentSelectedPiece()) {
@@ -86,15 +102,17 @@ export const Chessboard: Component<ChessboardProps> = ({
           return;
         }
 
-        const validMoves: Array<PiecePositionAlgebraic> = currentSelectedPiece()!.getValidMoves(
-          pieceMap(),
-          ownKingPosition,
-          enPassantTarget(),
-        );
+        const validMoves: Array<PiecePositionAlgebraic> =
+          currentSelectedPiece()!.getValidMoves(
+            pieceMap(),
+            ownKingPosition,
+            enPassantTarget()
+          );
 
         if (validMoves.includes(clickedPosition)) {
           const nextPieceMap = { ...pieceMap() };
-          const pieceToCapture: Piece | undefined = nextPieceMap[clickedPosition];
+          const pieceToCapture: Piece | undefined =
+            nextPieceMap[clickedPosition];
 
           const movedPiece: Piece = currentSelectedPiece()!.clone();
           movedPiece.position = clickedPosition;
@@ -114,9 +132,15 @@ export const Chessboard: Component<ChessboardProps> = ({
           if (pieceToCapture) {
             pieceToCapture.captured = true;
             if (pieceToCapture.color === 'white') {
-              setCapturedWhitePieces([...capturedWhitePieces(), pieceToCapture]);
+              setCapturedWhitePieces([
+                ...capturedWhitePieces(),
+                pieceToCapture,
+              ]);
             } else {
-              setCapturedBlackPieces([...capturedBlackPieces(), pieceToCapture]);
+              setCapturedBlackPieces([
+                ...capturedBlackPieces(),
+                pieceToCapture,
+              ]);
             }
           }
 
@@ -125,15 +149,18 @@ export const Chessboard: Component<ChessboardProps> = ({
             clickedPosition === enPassantTarget()
           ) {
             const direction: 1 | -1 = movedPiece.color === 'white' ? -1 : 1;
-            const targetCoords: Coordinates | null = positionToCoordinates(clickedPosition);
+            const targetCoords: Coordinates | null =
+              positionToCoordinates(clickedPosition);
             if (targetCoords) {
               const capturedPawnCoords: Coordinates = {
                 fileIndex: targetCoords.fileIndex,
                 rankIndex: targetCoords.rankIndex + direction,
               };
-              const capturedPawnPos: PiecePositionAlgebraic | null = coordinatesToPosition(capturedPawnCoords);
+              const capturedPawnPos: PiecePositionAlgebraic | null =
+                coordinatesToPosition(capturedPawnCoords);
               if (capturedPawnPos) {
-                const actualCapturedPawn: Piece | undefined = nextPieceMap[capturedPawnPos];
+                const actualCapturedPawn: Piece | undefined =
+                  nextPieceMap[capturedPawnPos];
                 if (
                   actualCapturedPawn &&
                   actualCapturedPawn.type === 'pawn' &&
@@ -159,9 +186,15 @@ export const Chessboard: Component<ChessboardProps> = ({
 
           let nextEnPassantTarget: PiecePositionAlgebraic | null = null;
           if (movedPiece.type === 'pawn') {
-            const startCoords: Coordinates | null = positionToCoordinates(startPosition);
-            const endCoords: Coordinates | null = positionToCoordinates(clickedPosition);
-            if (startCoords && endCoords && Math.abs(startCoords.rankIndex - endCoords.rankIndex) === 2) {
+            const startCoords: Coordinates | null =
+              positionToCoordinates(startPosition);
+            const endCoords: Coordinates | null =
+              positionToCoordinates(clickedPosition);
+            if (
+              startCoords &&
+              endCoords &&
+              Math.abs(startCoords.rankIndex - endCoords.rankIndex) === 2
+            ) {
               const direction: 1 | -1 = movedPiece.color === 'white' ? 1 : -1;
               nextEnPassantTarget = coordinatesToPosition({
                 fileIndex: startCoords.fileIndex,
@@ -170,7 +203,6 @@ export const Chessboard: Component<ChessboardProps> = ({
             }
           }
           setEnPassantTarget(nextEnPassantTarget);
-
 
           setPieceMap(nextPieceMap);
           setSelectedPiece(undefined);
@@ -208,9 +240,12 @@ export const Chessboard: Component<ChessboardProps> = ({
         <For each={board()}>
           {(square: Square) => {
             const piecePositionAlgebraic: PiecePositionAlgebraic = `${square.file}${square.rank}`;
-            const piece = (): Piece | undefined => pieceMap()[piecePositionAlgebraic];
+            const piece = (): Piece | undefined =>
+              pieceMap()[piecePositionAlgebraic];
             const isSelected = (): boolean =>
-              !!selectedPiece() && !!piece() && (piece()?.position === selectedPiece()?.position);
+              !!selectedPiece() &&
+              !!piece() &&
+              piece()?.position === selectedPiece()?.position;
             /*const isValidMoveTarget = (): boolean => {
               const sp = selectedPiece();
               if (!sp) return false;

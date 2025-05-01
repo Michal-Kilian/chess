@@ -4,16 +4,21 @@ import { PieceColor, PiecePositionAlgebraic } from './components/types/pieces';
 import { Button } from './components/ui/button';
 import { ArrowDownUp } from 'lucide-solid';
 import { Piece } from './components/pieces/Piece';
-import { calculateEvaluation, displayEvaluation, getGradientPercentage } from './components/utils/utils';
+import {
+  calculateEvaluation,
+  displayEvaluation,
+  getGradientPercentage,
+} from './components/utils/utils';
 import { Evaluation } from './components/types/chessboard';
 import { initialPieceMap } from './components/board/Board';
 
 const App: Component = () => {
   const [orientation, setOrientation] = createSignal<PieceColor>('white');
 
-  const [pieceMap, setPieceMap] = createSignal<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>(
-    initialPieceMap
-  );
+  const [pieceMap, setPieceMap] =
+    createSignal<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>(
+      initialPieceMap
+    );
 
   const [capturedWhitePieces, setCapturedWhitePieces] = createSignal<
     Array<Piece>
@@ -22,13 +27,15 @@ const App: Component = () => {
     Array<Piece>
   >([]);
   const [evaluation, setEvaluation] = createSignal<Evaluation>({
-    winning: "equal",
+    winning: 'equal',
     blackMaterialDifference: 0,
     whiteMaterialDifference: 0,
   });
 
   createEffect(() => {
-    setEvaluation(calculateEvaluation(capturedWhitePieces(), capturedBlackPieces()))
+    setEvaluation(
+      calculateEvaluation(capturedWhitePieces(), capturedBlackPieces())
+    );
   });
 
   const toggleOrientation = () => {
@@ -54,9 +61,7 @@ const App: Component = () => {
             <Show when={capturedWhitePieces().length > 0}>
               <div class="flex flex-row flex-wrap items-center justify-start p-1">
                 <For each={capturedWhitePieces()}>
-                  {(piece: Piece) => (
-                    <span>{piece.symbol}</span>
-                  )}
+                  {(piece: Piece) => <span>{piece.symbol}</span>}
                 </For>
               </div>
             </Show>
@@ -77,9 +82,7 @@ const App: Component = () => {
             <Show when={capturedBlackPieces().length > 0}>
               <div class="flex flex-row flex-wrap items-center justify-start p-1">
                 <For each={capturedBlackPieces()}>
-                  {(piece: Piece) => (
-                    <span>{piece.symbol}</span>
-                  )}
+                  {(piece: Piece) => <span>{piece.symbol}</span>}
                 </For>
               </div>
             </Show>
@@ -97,18 +100,18 @@ const App: Component = () => {
           }}
         >
           <Show when={evaluation().winning !== 'equal'}>
-            <span
-              class="absolute top-1 right-0 left-0 text-center text-slate-500 text-sm">
-              {displayEvaluation(orientation() === "white" ?
-                evaluation().blackMaterialDifference :
-                evaluation().whiteMaterialDifference
+            <span class="absolute top-1 right-0 left-0 text-center text-slate-500 text-sm">
+              {displayEvaluation(
+                orientation() === 'white'
+                  ? evaluation().blackMaterialDifference
+                  : evaluation().whiteMaterialDifference
               )}
             </span>
-            <span
-              class="absolute bottom-1 right-0 left-0 text-center text-slate-500 text-sm">
-              {displayEvaluation(orientation() === "white" ?
-                evaluation().blackMaterialDifference :
-                evaluation().whiteMaterialDifference
+            <span class="absolute bottom-1 right-0 left-0 text-center text-slate-500 text-sm">
+              {displayEvaluation(
+                orientation() === 'white'
+                  ? evaluation().blackMaterialDifference
+                  : evaluation().whiteMaterialDifference
               )}
             </span>
           </Show>

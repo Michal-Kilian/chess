@@ -4,9 +4,7 @@ interface WhiteKingProps {
   className?: string;
 }
 
-export const WhiteKing: Component = ({
-  className,
-}: WhiteKingProps) => {
+export const WhiteKing: Component = ({ className }: WhiteKingProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
