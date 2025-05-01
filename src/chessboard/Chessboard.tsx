@@ -9,10 +9,10 @@ import {
 } from 'solid-js';
 import {
   ChessboardNotation,
-  Coordinates,
+  Coordinates, Move,
   Square,
 } from '../components/types/chessboard';
-import { PieceColor, PiecePositionAlgebraic } from '../components/types/pieces';
+import { PieceColor, PiecePositionAlgebraic, PieceType } from '../components/types/pieces';
 import { Dynamic } from 'solid-js/web';
 import {
   coordinatesToPosition,
@@ -30,9 +30,12 @@ import { Notation } from './Notation';
 
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
+  setOrientation: Setter<PieceColor>;
   pieceMap: Accessor<
     Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   >;
+  moves: Accessor<Array<Move>>;
+  setMoves: Setter<Array<Move>>;
   setPieceMap: Setter<
     Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   >;
@@ -44,7 +47,10 @@ interface ChessboardProps {
 
 export const Chessboard: Component<ChessboardProps> = ({
   orientation,
+  setOrientation,
   pieceMap,
+  moves,
+  setMoves,
   setPieceMap,
   capturedWhitePieces,
   setCapturedWhitePieces,
@@ -110,6 +116,8 @@ export const Chessboard: Component<ChessboardProps> = ({
           );
 
         if (validMoves.includes(clickedPosition)) {
+          let isCastling: boolean = false;
+
           const nextPieceMap = { ...pieceMap() };
           const pieceToCapture: Piece | undefined =
             nextPieceMap[clickedPosition];
@@ -127,6 +135,27 @@ export const Chessboard: Component<ChessboardProps> = ({
             } else {
               setBlackKingPosition(clickedPosition);
             }
+
+            // TODO: Rook moves when castling
+            /*const rookStartPosition = coordinatesToPosition({
+              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? 7 : 0,
+              rankIndex: endCoords.rankIndex,
+            });
+            const rookEndPosition = coordinatesToPosition({
+              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? endCoords.fileIndex - 1 : endCoords.fileIndex + 1,
+              rankIndex: endCoords.rankIndex,
+            });
+            if (rookStartPosition && rookEndPosition) {
+              const rook: Piece | undefined = nextPieceMap[rookStartPosition];
+              if (rook && rook.type === 'rook' && rook.color === movedPiece.color) {
+                const nextRook: Rook = rook.clone();
+                nextRook.position = rookEndPosition;
+                nextRook.hasMoved = true;
+                nextPieceMap[rookStartPosition] = undefined;
+                nextPieceMap[rookEndPosition] = nextRook;
+                isCastling = true;
+              }
+            }*/
           }
 
           if (pieceToCapture) {
@@ -204,13 +233,36 @@ export const Chessboard: Component<ChessboardProps> = ({
           }
           setEnPassantTarget(nextEnPassantTarget);
 
+          /*if (movedPiece.type === "pawn") {
+            const endCoords: Coordinates | null = positionToCoordinates(clickedPosition);
+            if (endCoords && (endCoords.rankIndex === 0 || endCoords.rankIndex === 7)) {
+              // TODO: Promotion select
+              const promotionChoice: PieceType = "queen";
+              const promotedPiece: Piece = getPromotedPiece(promotionChoice, turn());
+
+              const pieceMapAfterPromotion: Partial<Record<PiecePositionAlgebraic, Piece | undefined>> = pieceMap();
+
+            }
+          }*/
+
           setPieceMap(nextPieceMap);
           setSelectedPiece(undefined);
-          setTurn(togglePieceColor(turn()));
+          const nextTurn: PieceColor = togglePieceColor(turn());
+          setTurn(nextTurn);
+          if (nextTurn !== orientation()) {
+            setOrientation(togglePieceColor(orientation()))
+          }
 
-          // TODO: Handle Castling (move the rook) - needs more logic here or in Piece class
-          // TODO: Handle Pawn Promotion - check if pawn reached last rank
-          // TODO: Check for check/checkmate/stalemate after the move
+          const move: Move = {
+            piece: movedPiece,
+            from: startPosition,
+            to: clickedPosition,
+            capturedPiece: pieceToCapture,
+            isCastling: isCastling,
+            isEnPassant: clickedPosition === enPassantTarget(),
+          };
+
+          setMoves([...moves(), move]);
         } else {
           if (
             pieceOnClickedSquare() &&
@@ -227,6 +279,12 @@ export const Chessboard: Component<ChessboardProps> = ({
         setSelectedPiece(pieceOnClickedSquare());
       }
     }
+
+    // TODO: check for end of game
+    /*const nextOwnKingPosition: PiecePositionAlgebraic = ...;
+    const isCheck: boolean = isKingInCheck(nextPieceMap, nextOwnKingPosition);
+    const isCheckmate: boolean = isCheck && !hasValidMoves(nextPieceMap, nextOwnKingPosition);
+    const isStalemate: boolean = !isCheck && !hasValidMoves(nextPieceMap, nextOwnKingPosition);*/
   };
 
   return (
@@ -264,9 +322,9 @@ export const Chessboard: Component<ChessboardProps> = ({
                 classList={{
                   'bg-gray-500 text-white': square.even,
                   'bg-gray-200 text-gray-900': !square.even,
-                  'outline outline-4 outline-blue-500 outline-offset-[-4px] z-10':
+                  'outline outline-4 outline-slate-700 outline-offset-[-4px] z-10':
                     isSelected(),
-                  'hover:outline hover:outline-2 hover:outline-gray-500 hover:outline-offset-[-2px]':
+                  'hover:outline hover:outline-2 hover:outline-slate-700 hover:outline-offset-[-2px]':
                     !!piece() && piece()?.color === turn(),
                 }}
                 class="relative h-14 w-14 flex items-center justify-center text-xs cursor-pointer"
@@ -293,6 +351,8 @@ export const Chessboard: Component<ChessboardProps> = ({
                     selectedPiece={selectedPiece()}
                     pieceMap={pieceMap()}
                     piecePositionAlgebraic={piecePositionAlgebraic}
+                    ownKingPosition={turn() === "white" ? whiteKingPosition() : blackKingPosition()}
+                    enPassantTarget={enPassantTarget()}
                   />
                 </div>
               </div>

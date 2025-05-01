@@ -1,5 +1,5 @@
 import { PieceColor, PiecePositionAlgebraic, PieceType } from '../types/pieces';
-import { Evaluation, FileId, RankId, Square } from '../types/chessboard';
+import { Evaluation, FileId, Move, RankId, Square } from '../types/chessboard';
 import { Piece } from '../pieces/Piece';
 import { WhiteKing } from '../icons/white-king';
 import { BlackKing } from '../icons/black-king';
@@ -13,6 +13,7 @@ import { WhiteKnight } from '../icons/white-knight';
 import { BlackKnight } from '../icons/black-knight';
 import { WhitePawn } from '../icons/white-pawn';
 import { BlackPawn } from '../icons/black-pawn';
+import { knownOpenings } from '../board/Board';
 
 const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -143,6 +144,40 @@ export const getGradientPercentage = (
 ): number => {
   const maxMaterialDifference: number = 30;
   const materialDifference: number = evaluation.whiteMaterialDifference;
-  const percentage = (materialDifference / maxMaterialDifference) * 50 + 50;
+  const percentage: number = (materialDifference / maxMaterialDifference) * 50 + 50;
   return orientation === 'white' ? percentage : 100 - percentage;
+};
+
+export const getMoveNotation = (move: Move): string => {
+  const piece: Piece = move.piece;
+  const from: PiecePositionAlgebraic = move.from;
+  const to: PiecePositionAlgebraic = move.to;
+  let notation: string = '';
+  if (piece.type !== 'pawn') {
+    notation += piece.notation;
+  }
+  if (move.capturedPiece) {
+    if (piece.type === 'pawn') {
+      notation += from.charAt(0);
+    }
+    notation += 'x';
+  }
+  notation += to;
+  if (move.promotion) {
+    notation += '=' + move.promotion.charAt(0).toUpperCase();
+  }
+  return notation;
+};
+
+export const detectChessOpening = (moves: Array<Move>) => {
+  const moveNotations: Array<string> = moves.map((move: Move) => getMoveNotation(move));
+  const moveSequence: string = moveNotations.join(' ');
+
+  for (const key in knownOpenings) {
+    if (moveSequence.startsWith(key)) {
+      return knownOpenings[key].name;
+    }
+  }
+
+  return null;
 };
