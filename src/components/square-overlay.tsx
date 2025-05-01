@@ -16,13 +16,21 @@ export const SquareOverlay: Component<SquareOverlayProps> = (
   const isEmptyPotentialSquare = (): boolean =>
     !!props.selectedPiece &&
     props.selectedPiece
-      ?.getValidMoves(props.pieceMap, props.ownKingPosition!, props.enPassantTarget)
+      ?.getValidMoves(
+        props.pieceMap,
+        props.ownKingPosition!,
+        props.enPassantTarget
+      )
       .includes(props.piecePositionAlgebraic) &&
     !props.pieceMap[props.piecePositionAlgebraic];
   const isOpponentPiecePotentialSquare = (): boolean =>
     (!!props.selectedPiece &&
       props
-        .selectedPiece!.getValidMoves(props.pieceMap, props.ownKingPosition!, props.enPassantTarget)
+        .selectedPiece!.getValidMoves(
+          props.pieceMap,
+          props.ownKingPosition!,
+          props.enPassantTarget
+        )
         .includes(props.piecePositionAlgebraic) &&
       props.pieceMap[props.piecePositionAlgebraic] &&
       props.pieceMap[props.piecePositionAlgebraic]?.color !==

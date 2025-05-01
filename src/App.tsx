@@ -4,9 +4,7 @@ import { PieceColor, PiecePositionAlgebraic } from './components/types/pieces';
 import { Button } from './components/ui/button';
 import { ArrowDownUp } from 'lucide-solid';
 import { Piece } from './components/pieces/Piece';
-import {
-  calculateEvaluation,
-} from './components/utils/utils';
+import { calculateEvaluation } from './components/utils/utils';
 import { Evaluation, Move } from './components/types/chessboard';
 import { initialPieceMap } from './components/board/Board';
 import { EvaluationBar } from './chessboard/EvaluationBar';
@@ -18,7 +16,7 @@ const App: Component = () => {
   const [orientation, setOrientation] = createSignal<PieceColor>('white');
   const [pieceMap, setPieceMap] =
     createSignal<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>(
-      initialPieceMap,
+      initialPieceMap
     );
   const [moves, setMoves] = createSignal<Array<Move>>([]);
   const [capturedWhitePieces, setCapturedWhitePieces] = createSignal<
@@ -35,7 +33,7 @@ const App: Component = () => {
 
   createEffect(() => {
     setEvaluation(
-      calculateEvaluation(capturedWhitePieces(), capturedBlackPieces()),
+      calculateEvaluation(capturedWhitePieces(), capturedBlackPieces())
     );
   });
 
@@ -54,9 +52,7 @@ const App: Component = () => {
               evaluation={evaluation}
             />
 
-            <CapturedPiecesDisplay
-              capturedPieces={capturedWhitePieces}
-            />
+            <CapturedPiecesDisplay capturedPieces={capturedWhitePieces} />
           </div>
 
           <div class="w-full h-fit flex flex-col items-start justify-center gap-y-1 bg-slate-800 rounded-md px-3 py-2">
@@ -66,16 +62,11 @@ const App: Component = () => {
               evaluation={evaluation}
             />
 
-            <CapturedPiecesDisplay
-              capturedPieces={capturedBlackPieces}
-            />
+            <CapturedPiecesDisplay capturedPieces={capturedBlackPieces} />
           </div>
         </div>
 
-        <EvaluationBar
-          evaluation={evaluation}
-          orientation={orientation}
-        />
+        <EvaluationBar evaluation={evaluation} orientation={orientation} />
       </div>
       <Chessboard
         orientation={orientation}
@@ -90,9 +81,7 @@ const App: Component = () => {
         setCapturedBlackPieces={setCapturedBlackPieces}
       />
       <div class="w-full h-full flex flex-col gap-10 items-center justify-center p-10">
-        <MoveList
-          moves={moves}
-        />
+        <MoveList moves={moves} />
 
         <div class="w-full h-1/2 bg-slate-800 rounded-md">
           <div class="flex flex-row items-center justify-between p-2">
@@ -108,8 +97,7 @@ const App: Component = () => {
         </div>
       </div>
     </div>
-  )
-    ;
+  );
 };
 
 export default App;

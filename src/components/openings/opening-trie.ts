@@ -1,13 +1,13 @@
 class OpeningTrieNode {
   children: {
-    [key: string]: OpeningTrieNode
+    [key: string]: OpeningTrieNode;
   };
   openingName: string | null;
 
   constructor() {
     this.children = {};
     this.openingName = null;
-  };
+  }
 }
 
 class OpeningTrie {
@@ -15,7 +15,7 @@ class OpeningTrie {
 
   constructor() {
     this.root = new OpeningTrieNode();
-  };
+  }
 
   insert(moveSequence: string, openingName: string) {
     let currentNode = this.root;
@@ -29,7 +29,7 @@ class OpeningTrie {
     }
 
     currentNode.openingName = openingName;
-  };
+  }
 
   search(moveSequence: string) {
     let currentNode = this.root;
@@ -43,7 +43,7 @@ class OpeningTrie {
     }
 
     return currentNode.openingName;
-  };
+  }
 }
 
 /*const trie = new OpeningTrie();

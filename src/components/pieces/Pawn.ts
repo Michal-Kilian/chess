@@ -1,7 +1,4 @@
-import {
-  PieceColor,
-  PiecePositionAlgebraic,
-} from '../types/pieces';
+import { PieceColor, PiecePositionAlgebraic } from '../types/pieces';
 import { WhitePawn } from '../icons/white-pawn';
 import { BlackPawn } from '../icons/black-pawn';
 import {

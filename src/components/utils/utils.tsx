@@ -144,7 +144,8 @@ export const getGradientPercentage = (
 ): number => {
   const maxMaterialDifference: number = 30;
   const materialDifference: number = evaluation.whiteMaterialDifference;
-  const percentage: number = (materialDifference / maxMaterialDifference) * 50 + 50;
+  const percentage: number =
+    (materialDifference / maxMaterialDifference) * 50 + 50;
   return orientation === 'white' ? percentage : 100 - percentage;
 };
 
@@ -170,7 +171,9 @@ export const getMoveNotation = (move: Move): string => {
 };
 
 export const detectChessOpening = (moves: Array<Move>) => {
-  const moveNotations: Array<string> = moves.map((move: Move) => getMoveNotation(move));
+  const moveNotations: Array<string> = moves.map((move: Move) =>
+    getMoveNotation(move)
+  );
   const moveSequence: string = moveNotations.join(' ');
 
   for (const key in knownOpenings) {

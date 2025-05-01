@@ -29,7 +29,7 @@ export type Move = {
 export type Opening = {
   name: string;
   moves: Array<string>;
-}
+};
 
 export type GameStatus =
   | 'ongoing'

@@ -9,10 +9,11 @@ import {
 } from 'solid-js';
 import {
   ChessboardNotation,
-  Coordinates, Move,
+  Coordinates,
+  Move,
   Square,
 } from '../components/types/chessboard';
-import { PieceColor, PiecePositionAlgebraic, PieceType } from '../components/types/pieces';
+import { PieceColor, PiecePositionAlgebraic } from '../components/types/pieces';
 import { Dynamic } from 'solid-js/web';
 import {
   coordinatesToPosition,
@@ -250,7 +251,7 @@ export const Chessboard: Component<ChessboardProps> = ({
           const nextTurn: PieceColor = togglePieceColor(turn());
           setTurn(nextTurn);
           if (nextTurn !== orientation()) {
-            setOrientation(togglePieceColor(orientation()))
+            setOrientation(togglePieceColor(orientation()));
           }
 
           const move: Move = {
@@ -351,7 +352,11 @@ export const Chessboard: Component<ChessboardProps> = ({
                     selectedPiece={selectedPiece()}
                     pieceMap={pieceMap()}
                     piecePositionAlgebraic={piecePositionAlgebraic}
-                    ownKingPosition={turn() === "white" ? whiteKingPosition() : blackKingPosition()}
+                    ownKingPosition={
+                      turn() === 'white'
+                        ? whiteKingPosition()
+                        : blackKingPosition()
+                    }
                     enPassantTarget={enPassantTarget()}
                   />
                 </div>

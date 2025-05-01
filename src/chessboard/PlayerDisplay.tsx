@@ -9,19 +9,25 @@ interface PlayerDisplayProps {
   evaluation: Accessor<Evaluation>;
 }
 
-export const PlayerDisplay: Component<PlayerDisplayProps> = (props: PlayerDisplayProps) => {
+export const PlayerDisplay: Component<PlayerDisplayProps> = (
+  props: PlayerDisplayProps
+) => {
   return (
     <div class="flex flex-row items-center justify-between w-full">
       <div class="flex flex-row items-center gap-x-3 justify-start">
         <label class="text-slate-200">{props.playerName}</label>
-        <Show when={props.color === "white" ?
-          props.evaluation()!.whiteMaterialDifference !== 0 :
-          props.evaluation()!.blackMaterialDifference !== 0
-        }>
+        <Show
+          when={
+            props.color === 'white'
+              ? props.evaluation()!.whiteMaterialDifference !== 0
+              : props.evaluation()!.blackMaterialDifference !== 0
+          }
+        >
           <span class="text-slate-500 font-medium">
-            {displayEvaluation(props.color === "white" ?
-              props.evaluation()!.whiteMaterialDifference :
-              props.evaluation()!.blackMaterialDifference
+            {displayEvaluation(
+              props.color === 'white'
+                ? props.evaluation()!.whiteMaterialDifference
+                : props.evaluation()!.blackMaterialDifference
             )}
           </span>
         </Show>
@@ -29,8 +35,8 @@ export const PlayerDisplay: Component<PlayerDisplayProps> = (props: PlayerDispla
       <div
         class="rounded-full w-6 h-6"
         classList={{
-          "bg-white": props.color === "white",
-          "bg-black": props.color === "black",
+          'bg-white': props.color === 'white',
+          'bg-black': props.color === 'black',
         }}
       />
     </div>
