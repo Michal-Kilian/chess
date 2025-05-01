@@ -1,11 +1,11 @@
-import { PieceColor, PiecePositionAlgebraic } from '../types/pieces';
+import { PiecePositionAlgebraic } from '../types/pieces';
 import { Piece } from '../pieces/Piece';
-import { King } from '../pieces/King';
-import { Pawn } from '../pieces/Pawn';
 import { Rook } from '../pieces/Rook';
 import { Knight } from '../pieces/Knight';
 import { Bishop } from '../pieces/Bishop';
 import { Queen } from '../pieces/Queen';
+import { King } from '../pieces/King';
+import { Pawn } from '../pieces/Pawn';
 
 export const initialPieceMap: Partial<
   Record<PiecePositionAlgebraic, Piece | undefined>

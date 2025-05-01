@@ -1,12 +1,19 @@
 import { Component } from 'solid-js';
 
-export const WhiteKing: Component = () => {
+interface WhiteKingProps {
+  className?: string;
+}
+
+export const WhiteKing: Component = ({
+  className,
+}: WhiteKingProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 45 45"
       width="45"
       height="45"
+      class={className}
     >
       <g
         fill="none"

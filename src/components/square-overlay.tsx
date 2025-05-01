@@ -1,5 +1,5 @@
-import { Piece } from '../lib/pieces/Piece';
-import { PiecePositionAlgebraic } from '../lib/types/pieces';
+import { Piece } from '../components/pieces/Piece';
+import { PiecePositionAlgebraic } from '../components/types/pieces';
 import { Component, Match, Switch } from 'solid-js';
 
 interface SquareOverlayProps {
