@@ -5,9 +5,8 @@ import {
   PieceType,
   PieceValue,
 } from '../types/pieces';
-import { Component } from 'solid-js';
+import { Component, createUniqueId } from 'solid-js';
 import { Coordinates, FileId, RankId } from '../types/chessboard';
-import { v4 as uuidv4 } from 'uuid';
 
 export const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 export const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -74,7 +73,7 @@ export abstract class Piece {
     hasMoved: boolean,
     captured: boolean
   ) {
-    this.id = uuidv4();
+    this.id = createUniqueId()
     this.color = color;
     this.position = position;
     this.type = type;
