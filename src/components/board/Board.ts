@@ -6,7 +6,7 @@ import { Bishop } from '../pieces/Bishop';
 import { Queen } from '../pieces/Queen';
 import { King } from '../pieces/King';
 import { Pawn } from '../pieces/Pawn';
-import { Opening } from '@/components/types/chessboard';
+import { Opening } from '../types/chessboard';
 
 export const initialPieceMap: Partial<
   Record<PiecePositionAlgebraic, Piece | undefined>

@@ -1,7 +1,6 @@
 import { Component, createEffect, createSignal } from 'solid-js';
 import { Chessboard } from './chessboard/Chessboard';
 import { PieceColor, PiecePositionAlgebraic } from './components/types/pieces';
-import { Button } from './components/ui/button';
 import { ArrowDownUp } from 'lucide-solid';
 import { Piece } from './components/pieces/Piece';
 import { calculateEvaluation } from './components/utils/utils';
@@ -85,14 +84,12 @@ const App: Component = () => {
 
         <div class="w-full h-1/2 bg-slate-800 rounded-md">
           <div class="flex flex-row items-center justify-between p-2">
-            <Button
-              size="icon"
-              variant="default"
+            <button
               onClick={toggleOrientation}
               class="cursor-pointer bg-slate-300 hover:bg-slate-100 transition-colors duration-300"
             >
               <ArrowDownUp class="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         </div>
       </div>
