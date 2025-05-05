@@ -32,6 +32,8 @@ import { Notation } from './Notation';
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
   setOrientation: Setter<PieceColor>;
+  turn: Accessor<PieceColor>;
+  setTurn: Setter<PieceColor>;
   pieceMap: Accessor<
     Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   >;
@@ -49,6 +51,8 @@ interface ChessboardProps {
 export const Chessboard: Component<ChessboardProps> = ({
   orientation,
   setOrientation,
+  turn,
+  setTurn,
   pieceMap,
   moves,
   setMoves,
@@ -73,7 +77,6 @@ export const Chessboard: Component<ChessboardProps> = ({
       findKingPosition(pieceMap(), 'black')
     );
 
-  const [turn, setTurn] = createSignal<PieceColor>('white');
   const [enPassantTarget, setEnPassantTarget] =
     createSignal<PiecePositionAlgebraic | null>(null);
 
@@ -250,9 +253,9 @@ export const Chessboard: Component<ChessboardProps> = ({
           setSelectedPiece(undefined);
           const nextTurn: PieceColor = togglePieceColor(turn());
           setTurn(nextTurn);
-          if (nextTurn !== orientation()) {
+          /*if (nextTurn !== orientation()) {
             setOrientation(togglePieceColor(orientation()));
-          }
+          }*/
 
           const move: Move = {
             piece: movedPiece,

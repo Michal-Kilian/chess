@@ -6,7 +6,7 @@ import { Bishop } from '../pieces/Bishop';
 import { Queen } from '../pieces/Queen';
 import { King } from '../pieces/King';
 import { Pawn } from '../pieces/Pawn';
-import { Opening } from '../types/chessboard';
+import { Evaluation, Opening } from '../types/chessboard';
 
 export const initialPieceMap: Partial<
   Record<PiecePositionAlgebraic, Piece | undefined>
@@ -44,6 +44,12 @@ export const initialPieceMap: Partial<
   C7: new Pawn('black', 'C7'),
   B7: new Pawn('black', 'B7'),
   A7: new Pawn('black', 'A7'),
+};
+
+export const initialEvaluation: Evaluation = {
+  winning: 'equal',
+  blackMaterialDifference: 0,
+  whiteMaterialDifference: 0,
 };
 
 export const knownOpenings: Record<string, Opening> = {
