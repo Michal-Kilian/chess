@@ -6,6 +6,8 @@ interface SquareOverlayProps {
   selectedPiece: Piece | undefined;
   pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>;
   piecePositionAlgebraic: PiecePositionAlgebraic;
+  ownKingPosition: PiecePositionAlgebraic | null;
+  enPassantTarget: PiecePositionAlgebraic | null;
 }
 
 export const SquareOverlay: Component<SquareOverlayProps> = (
@@ -14,17 +16,25 @@ export const SquareOverlay: Component<SquareOverlayProps> = (
   const isEmptyPotentialSquare = (): boolean =>
     !!props.selectedPiece &&
     props.selectedPiece
-      ?.getPotentialMoves(props.pieceMap)
+      ?.getValidMoves(
+        props.pieceMap,
+        props.ownKingPosition!,
+        props.enPassantTarget
+      )
       .includes(props.piecePositionAlgebraic) &&
     !props.pieceMap[props.piecePositionAlgebraic];
   const isOpponentPiecePotentialSquare = (): boolean =>
     (!!props.selectedPiece &&
       props
-        .selectedPiece!.getPotentialMoves(props.pieceMap)
+        .selectedPiece!.getValidMoves(
+          props.pieceMap,
+          props.ownKingPosition!,
+          props.enPassantTarget
+        )
         .includes(props.piecePositionAlgebraic) &&
       props.pieceMap[props.piecePositionAlgebraic] &&
       props.pieceMap[props.piecePositionAlgebraic]?.color !==
-        props.selectedPiece?.color) ??
+      props.selectedPiece?.color) ??
     false;
 
   return (

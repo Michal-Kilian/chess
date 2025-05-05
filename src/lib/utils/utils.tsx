@@ -1,7 +1,19 @@
-import { PieceColor, PiecePositionAlgebraic } from '../types/pieces';
-import { FileId, RankId, Square } from '../types/chessboard';
+import { PieceColor, PiecePositionAlgebraic, PieceType } from '../types/pieces';
+import { Evaluation, FileId, Move, RankId, Square } from '../types/chessboard';
 import { Piece } from '../pieces/Piece';
-import { Accessor, Component } from 'solid-js';
+import { WhiteKing } from '../icons/white-king';
+import { BlackKing } from '../icons/black-king';
+import { WhiteQueen } from '../icons/white-queen';
+import { BlackQueen } from '../icons/black-queen';
+import { WhiteRook } from '../icons/white-rook';
+import { BlackRook } from '../icons/black-rook';
+import { WhiteBishop } from '../icons/white-bishop';
+import { BlackBishop } from '../icons/black-bishop';
+import { WhiteKnight } from '../icons/white-knight';
+import { BlackKnight } from '../icons/black-knight';
+import { WhitePawn } from '../icons/white-pawn';
+import { BlackPawn } from '../icons/black-pawn';
+import { knownOpenings } from '../board/Board';
 
 const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -36,7 +48,7 @@ export const getNotation = (orientation: PieceColor) => {
 };
 
 export const togglePieceColor = (pieceColor: PieceColor): PieceColor => {
-  return pieceColor === "white" ? "black" : "white";
+  return pieceColor === 'white' ? 'black' : 'white';
 };
 
 export const isSquareAttacked = (
@@ -45,7 +57,8 @@ export const isSquareAttacked = (
   pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
 ): boolean => {
   for (const position in pieceMap) {
-    const piece: Piece | undefined = pieceMap[position as PiecePositionAlgebraic];
+    const piece: Piece | undefined =
+      pieceMap[position as PiecePositionAlgebraic];
     if (piece && piece.color === attackerColor) {
       const potentialAttacks = piece.getPotentialMoves(pieceMap);
       if (potentialAttacks.includes(square)) {
@@ -58,7 +71,7 @@ export const isSquareAttacked = (
 
 export const findKingPosition = (
   pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
-  kingColor: PieceColor,
+  kingColor: PieceColor
 ): PiecePositionAlgebraic | null => {
   for (const [position, piece] of Object.entries(pieceMap)) {
     const algebraicPos = position as PiecePositionAlgebraic;
@@ -69,5 +82,105 @@ export const findKingPosition = (
       }
     }
   }
+  return null;
+};
+
+export const getPieceImage = (pieceType: PieceType, pieceColor: PieceColor) => {
+  switch (pieceType) {
+    case 'king':
+      return pieceColor === 'white' ? <WhiteKing /> : <BlackKing />;
+    case 'queen':
+      return pieceColor === 'white' ? <WhiteQueen /> : <BlackQueen />;
+    case 'rook':
+      return pieceColor === 'white' ? <WhiteRook /> : <BlackRook />;
+    case 'bishop':
+      return pieceColor === 'white' ? <WhiteBishop /> : <BlackBishop />;
+    case 'knight':
+      return pieceColor === 'white' ? <WhiteKnight /> : <BlackKnight />;
+    case 'pawn':
+      return pieceColor === 'white' ? <WhitePawn /> : <BlackPawn />;
+    default:
+      return;
+  }
+};
+
+export const calculateEvaluation = (
+  capturedWhitePieces: Array<Piece>,
+  capturedBlackPieces: Array<Piece>
+): Evaluation => {
+  const whiteMaterialLoss: number = capturedWhitePieces.reduce(
+    (acc: number, piece: Piece): number => acc + piece.value,
+    0
+  );
+  const blackMaterialLoss: number = capturedBlackPieces.reduce(
+    (acc: number, piece: Piece): number => acc + piece.value,
+    0
+  );
+
+  const whiteStanding: number = -whiteMaterialLoss;
+  const blackStanding: number = -blackMaterialLoss;
+
+  const materialDifference: number = whiteStanding - blackStanding;
+
+  return {
+    winning:
+      materialDifference > 0
+        ? 'white'
+        : materialDifference < 0
+          ? 'black'
+          : 'equal',
+    whiteMaterialDifference: materialDifference,
+    blackMaterialDifference: -materialDifference,
+  } satisfies Evaluation;
+};
+
+export const displayEvaluation = (evaluation: number): string => {
+  return evaluation > 0 ? '+' + evaluation.toString() : evaluation.toString();
+};
+
+export const getGradientPercentage = (
+  evaluation: Evaluation,
+  orientation: PieceColor
+): number => {
+  const maxMaterialDifference: number = 30;
+  const materialDifference: number = evaluation.whiteMaterialDifference;
+  const percentage: number =
+    (materialDifference / maxMaterialDifference) * 50 + 50;
+  return orientation === 'white' ? percentage : 100 - percentage;
+};
+
+export const getMoveNotation = (move: Move): string => {
+  const piece: Piece = move.piece;
+  const from: PiecePositionAlgebraic = move.from;
+  const to: PiecePositionAlgebraic = move.to;
+  let notation: string = '';
+  if (piece.type !== 'pawn') {
+    notation += piece.notation;
+  }
+  if (move.capturedPiece) {
+    if (piece.type === 'pawn') {
+      notation += from.charAt(0);
+    }
+    notation += 'x';
+  }
+  notation += to;
+  if (move.promotion) {
+    notation += '=' + move.promotion.charAt(0).toUpperCase();
+  }
+  return notation;
+};
+
+export const detectChessOpening = (moves: Array<Move>) => {
+  const moveNotations: Array<string> = moves.map((move: Move) =>
+    getMoveNotation(move)
+  );
+  const moveSequence: string = moveNotations.join(' ');
+
+  for (const key in knownOpenings) {
+    if (moveSequence.startsWith(key)) {
+      return knownOpenings[key].name;
+    }
+  }
+
   return null;
 };

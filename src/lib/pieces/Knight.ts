@@ -5,7 +5,12 @@ import {
 } from '../types/pieces';
 import { WhiteKnight } from '../icons/white-knight';
 import { BlackKnight } from '../icons/black-knight';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { Coordinates } from '../types/chessboard';
 import { togglePieceColor } from '../utils/utils';
 
@@ -63,7 +68,7 @@ export class Knight extends Piece {
       }
     }
     return moves;
-  };
+  }
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
@@ -74,7 +79,8 @@ export class Knight extends Piece {
       return [];
     }
 
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
     const opponentColor: PieceColor = togglePieceColor(this.color);
 
@@ -90,7 +96,8 @@ export class Knight extends Piece {
           tempPieceMap[position as PiecePositionAlgebraic];
 
         if (attackerPiece && attackerPiece.color === opponentColor) {
-          const attacks: Array<PiecePositionAlgebraic> = attackerPiece.getPotentialMoves(tempPieceMap);
+          const attacks: Array<PiecePositionAlgebraic> =
+            attackerPiece.getPotentialMoves(tempPieceMap);
 
           if (attacks.includes(ownKingPosition)) {
             kingIsAttacked = true;
@@ -103,12 +110,12 @@ export class Knight extends Piece {
       }
     }
     return validMoves;
-  };
+  }
 
   clone(): this {
     const clonedPiece = new Knight(this.color, this.position);
     clonedPiece.hasMoved = this.hasMoved;
     clonedPiece.captured = this.captured;
     return clonedPiece as this;
-  };
+  }
 }

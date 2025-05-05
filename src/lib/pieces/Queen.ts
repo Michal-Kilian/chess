@@ -5,7 +5,12 @@ import {
 } from '../types/pieces';
 import { WhiteQueen } from '../icons/white-queen';
 import { BlackQueen } from '../icons/black-queen';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { Coordinates } from '../types/chessboard';
 import { togglePieceColor } from '../utils/utils';
 
@@ -73,14 +78,15 @@ export class Queen extends Piece {
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
-    ownKingPosition: PiecePositionAlgebraic,
+    ownKingPosition: PiecePositionAlgebraic
   ): Array<PiecePositionAlgebraic> {
     if (!ownKingPosition) {
       console.error('Cannot get valid moves without own king position.');
       return [];
     }
 
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
     const opponentColor: PieceColor = togglePieceColor(this.color);
 
@@ -96,7 +102,8 @@ export class Queen extends Piece {
           tempPieceMap[position as PiecePositionAlgebraic];
 
         if (attackerPiece && attackerPiece.color === opponentColor) {
-          const attacks: Array<PiecePositionAlgebraic> = attackerPiece.getPotentialMoves(tempPieceMap);
+          const attacks: Array<PiecePositionAlgebraic> =
+            attackerPiece.getPotentialMoves(tempPieceMap);
 
           if (attacks.includes(ownKingPosition)) {
             kingIsAttacked = true;

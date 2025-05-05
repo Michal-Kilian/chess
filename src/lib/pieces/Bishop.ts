@@ -5,7 +5,12 @@ import {
 } from '../types/pieces';
 import { WhiteBishop } from '../icons/white-bishop';
 import { BlackBishop } from '../icons/black-bishop';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { Coordinates } from '../types/chessboard';
 import { togglePieceColor } from '../utils/utils';
 
@@ -69,14 +74,15 @@ export class Bishop extends Piece {
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
-    ownKingPosition: PiecePositionAlgebraic | null,
+    ownKingPosition: PiecePositionAlgebraic | null
   ): Array<PiecePositionAlgebraic> {
     if (!ownKingPosition) {
       console.error('Cannot get valid moves without own king position.');
       return [];
     }
 
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
     const opponentColor: PieceColor = togglePieceColor(this.color);
 
@@ -92,7 +98,8 @@ export class Bishop extends Piece {
           tempPieceMap[position as PiecePositionAlgebraic];
 
         if (attackerPiece && attackerPiece.color === opponentColor) {
-          const attacks: Array<PiecePositionAlgebraic> = attackerPiece.getPotentialMoves(tempPieceMap);
+          const attacks: Array<PiecePositionAlgebraic> =
+            attackerPiece.getPotentialMoves(tempPieceMap);
 
           if (attacks.includes(ownKingPosition)) {
             kingIsAttacked = true;
@@ -105,7 +112,7 @@ export class Bishop extends Piece {
       }
     }
     return validMoves;
-  };
+  }
 
   clone(): this {
     const clonedPiece = new Bishop(this.color, this.position);

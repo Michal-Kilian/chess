@@ -3,7 +3,12 @@ import {
   PiecePositionAlgebraic,
   RookDirection,
 } from '../types/pieces';
-import { coordinatesToPosition, isOnBoard, Piece, positionToCoordinates } from './Piece';
+import {
+  coordinatesToPosition,
+  isOnBoard,
+  Piece,
+  positionToCoordinates,
+} from './Piece';
 import { WhiteRook } from '../icons/white-rook';
 import { BlackRook } from '../icons/black-rook';
 import { Coordinates } from '../types/chessboard';
@@ -22,7 +27,7 @@ export class Rook extends Piece {
       false,
       false
     );
-  };
+  }
 
   getPotentialMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
@@ -65,7 +70,7 @@ export class Rook extends Piece {
       }
     }
     return moves;
-  };
+  }
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>,
@@ -76,7 +81,8 @@ export class Rook extends Piece {
       return [];
     }
 
-    const potentialMoves: Array<PiecePositionAlgebraic> = this.getPotentialMoves(pieceMap);
+    const potentialMoves: Array<PiecePositionAlgebraic> =
+      this.getPotentialMoves(pieceMap);
     const validMoves: Array<PiecePositionAlgebraic> = [];
     const opponentColor: PieceColor = togglePieceColor(this.color);
 
@@ -92,7 +98,8 @@ export class Rook extends Piece {
           tempPieceMap[position as PiecePositionAlgebraic];
 
         if (attackerPiece && attackerPiece.color === opponentColor) {
-          const attacks: Array<PiecePositionAlgebraic> = attackerPiece.getPotentialMoves(tempPieceMap);
+          const attacks: Array<PiecePositionAlgebraic> =
+            attackerPiece.getPotentialMoves(tempPieceMap);
 
           if (attacks.includes(ownKingPosition)) {
             kingIsAttacked = true;
@@ -105,12 +112,12 @@ export class Rook extends Piece {
       }
     }
     return validMoves;
-  };
+  }
 
   clone(): this {
     const clonedPiece = new Rook(this.color, this.position);
     clonedPiece.hasMoved = this.hasMoved;
     clonedPiece.captured = this.captured;
     return clonedPiece as this;
-  };
+  }
 }

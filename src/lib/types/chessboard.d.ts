@@ -1,4 +1,4 @@
-import { PiecePositionAlgebraic, PieceType } from './pieces';
+import { PieceColor, PiecePositionAlgebraic, PieceType } from './pieces';
 import { Piece } from '../pieces/Piece';
 
 export type RankId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -16,16 +16,19 @@ export type ChessboardNotation = {
   ranks: Array<RankId>;
 };
 
-export type BoardSquares = Partial<Record<PiecePositionAlgebraic, Piece>>;
-
 export type Move = {
   piece: Piece;
   from: PiecePositionAlgebraic;
   to: PiecePositionAlgebraic;
-  capturedPiece: Piece | null;
+  capturedPiece: Piece | undefined;
   promotion?: PieceType;
   isCastling: boolean;
   isEnPassant: boolean;
+};
+
+export type Opening = {
+  name: string;
+  moves: Array<string>;
 };
 
 export type GameStatus =
@@ -42,3 +45,9 @@ export interface Coordinates {
   fileIndex: number;
   rankIndex: number;
 }
+
+export type Evaluation = {
+  winning: PieceColor | 'equal';
+  whiteMaterialDifference: number;
+  blackMaterialDifference: number;
+};

@@ -5,55 +5,77 @@ import {
   createSignal,
   For,
   onMount,
+  Setter,
 } from 'solid-js';
 import {
-  ChessboardNotation, Coordinates,
-  FileId,
-  RankId,
+  ChessboardNotation,
+  Coordinates,
+  Move,
   Square,
 } from '../lib/types/chessboard';
 import { PieceColor, PiecePositionAlgebraic } from '../lib/types/pieces';
 import { Dynamic } from 'solid-js/web';
-import { coordinatesToPosition, Piece, positionToCoordinates } from '../lib/pieces/Piece';
-import { initialPieceMap } from '../lib/board/Board';
-import { findKingPosition, getInitialSquares, getNotation, togglePieceColor } from '../lib/utils/utils';
+import {
+  coordinatesToPosition,
+  Piece,
+  positionToCoordinates,
+} from '../lib/pieces/Piece';
+import {
+  findKingPosition,
+  getInitialSquares,
+  getNotation,
+  togglePieceColor,
+} from '../lib/utils/utils';
 import { SquareOverlay } from '../components/square-overlay';
+import { Notation } from './Notation';
 
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
+  setOrientation: Setter<PieceColor>;
+  pieceMap: Accessor<
+    Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
+  >;
+  moves: Accessor<Array<Move>>;
+  setMoves: Setter<Array<Move>>;
+  setPieceMap: Setter<
+    Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
+  >;
+  capturedWhitePieces: Accessor<Array<Piece>>;
+  setCapturedWhitePieces: Setter<Array<Piece>>;
+  capturedBlackPieces: Accessor<Array<Piece>>;
+  setCapturedBlackPieces: Setter<Array<Piece>>;
 }
 
 export const Chessboard: Component<ChessboardProps> = ({
   orientation,
+  setOrientation,
+  pieceMap,
+  moves,
+  setMoves,
+  setPieceMap,
+  capturedWhitePieces,
+  setCapturedWhitePieces,
+  capturedBlackPieces,
+  setCapturedBlackPieces,
 }: ChessboardProps) => {
   const [board, setBoard] = createSignal<Array<Square>>([]);
-  const [pieceMap, setPieceMap] =
-    createSignal<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>(
-      initialPieceMap
-    );
   const [notation, setNotation] = createSignal<ChessboardNotation>();
   const [selectedPiece, setSelectedPiece] = createSignal<Piece | undefined>(
     undefined
   );
 
-  const [whiteKingPosition, setWhiteKingPosition] = createSignal<
-    PiecePositionAlgebraic | null
-  >(findKingPosition(initialPieceMap, 'white'));
-  const [blackKingPosition, setBlackKingPosition] = createSignal<
-    PiecePositionAlgebraic | null
-  >(findKingPosition(initialPieceMap, 'black'));
+  const [whiteKingPosition, setWhiteKingPosition] =
+    createSignal<PiecePositionAlgebraic | null>(
+      findKingPosition(pieceMap(), 'white')
+    );
+  const [blackKingPosition, setBlackKingPosition] =
+    createSignal<PiecePositionAlgebraic | null>(
+      findKingPosition(pieceMap(), 'black')
+    );
 
-  const [capturedWhitePieces, setCapturedWhitePieces] = createSignal<
-    Array<Piece>
-  >([]);
-  const [capturedBlackPieces, setCapturedBlackPieces] = createSignal<
-    Array<Piece>
-  >([]);
-
-  const [turn, setTurn] = createSignal<PieceColor>("white");
-  const [enPassantTarget, setEnPassantTarget] = createSignal<
-    PiecePositionAlgebraic | null
-  >(null);
+  const [turn, setTurn] = createSignal<PieceColor>('white');
+  const [enPassantTarget, setEnPassantTarget] =
+    createSignal<PiecePositionAlgebraic | null>(null);
 
   onMount(() => {
     setBoard(getInitialSquares());
@@ -66,7 +88,8 @@ export const Chessboard: Component<ChessboardProps> = ({
 
   const handleSquareClick = (square: Square) => {
     const clickedPosition: PiecePositionAlgebraic = `${square.file}${square.rank}`;
-    const pieceOnClickedSquare = (): Piece | undefined => pieceMap()[clickedPosition];
+    const pieceOnClickedSquare = (): Piece | undefined =>
+      pieceMap()[clickedPosition];
     const currentSelectedPiece = (): Piece | undefined => selectedPiece();
 
     if (currentSelectedPiece()) {
@@ -86,15 +109,19 @@ export const Chessboard: Component<ChessboardProps> = ({
           return;
         }
 
-        const validMoves: Array<PiecePositionAlgebraic> = currentSelectedPiece()!.getValidMoves(
-          pieceMap(),
-          ownKingPosition,
-          enPassantTarget(),
-        );
+        const validMoves: Array<PiecePositionAlgebraic> =
+          currentSelectedPiece()!.getValidMoves(
+            pieceMap(),
+            ownKingPosition,
+            enPassantTarget()
+          );
 
         if (validMoves.includes(clickedPosition)) {
+          let isCastling: boolean = false;
+
           const nextPieceMap = { ...pieceMap() };
-          const pieceToCapture: Piece | undefined = nextPieceMap[clickedPosition];
+          const pieceToCapture: Piece | undefined =
+            nextPieceMap[clickedPosition];
 
           const movedPiece: Piece = currentSelectedPiece()!.clone();
           movedPiece.position = clickedPosition;
@@ -109,14 +136,41 @@ export const Chessboard: Component<ChessboardProps> = ({
             } else {
               setBlackKingPosition(clickedPosition);
             }
+
+            // TODO: Rook moves when castling
+            /*const rookStartPosition = coordinatesToPosition({
+              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? 7 : 0,
+              rankIndex: endCoords.rankIndex,
+            });
+            const rookEndPosition = coordinatesToPosition({
+              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? endCoords.fileIndex - 1 : endCoords.fileIndex + 1,
+              rankIndex: endCoords.rankIndex,
+            });
+            if (rookStartPosition && rookEndPosition) {
+              const rook: Piece | undefined = nextPieceMap[rookStartPosition];
+              if (rook && rook.type === 'rook' && rook.color === movedPiece.color) {
+                const nextRook: Rook = rook.clone();
+                nextRook.position = rookEndPosition;
+                nextRook.hasMoved = true;
+                nextPieceMap[rookStartPosition] = undefined;
+                nextPieceMap[rookEndPosition] = nextRook;
+                isCastling = true;
+              }
+            }*/
           }
 
           if (pieceToCapture) {
             pieceToCapture.captured = true;
             if (pieceToCapture.color === 'white') {
-              setCapturedWhitePieces([...capturedWhitePieces(), pieceToCapture]);
+              setCapturedWhitePieces([
+                ...capturedWhitePieces(),
+                pieceToCapture,
+              ]);
             } else {
-              setCapturedBlackPieces([...capturedBlackPieces(), pieceToCapture]);
+              setCapturedBlackPieces([
+                ...capturedBlackPieces(),
+                pieceToCapture,
+              ]);
             }
           }
 
@@ -125,15 +179,18 @@ export const Chessboard: Component<ChessboardProps> = ({
             clickedPosition === enPassantTarget()
           ) {
             const direction: 1 | -1 = movedPiece.color === 'white' ? -1 : 1;
-            const targetCoords: Coordinates | null = positionToCoordinates(clickedPosition);
+            const targetCoords: Coordinates | null =
+              positionToCoordinates(clickedPosition);
             if (targetCoords) {
               const capturedPawnCoords: Coordinates = {
                 fileIndex: targetCoords.fileIndex,
                 rankIndex: targetCoords.rankIndex + direction,
               };
-              const capturedPawnPos: PiecePositionAlgebraic | null = coordinatesToPosition(capturedPawnCoords);
+              const capturedPawnPos: PiecePositionAlgebraic | null =
+                coordinatesToPosition(capturedPawnCoords);
               if (capturedPawnPos) {
-                const actualCapturedPawn: Piece | undefined = nextPieceMap[capturedPawnPos];
+                const actualCapturedPawn: Piece | undefined =
+                  nextPieceMap[capturedPawnPos];
                 if (
                   actualCapturedPawn &&
                   actualCapturedPawn.type === 'pawn' &&
@@ -159,9 +216,15 @@ export const Chessboard: Component<ChessboardProps> = ({
 
           let nextEnPassantTarget: PiecePositionAlgebraic | null = null;
           if (movedPiece.type === 'pawn') {
-            const startCoords: Coordinates | null = positionToCoordinates(startPosition);
-            const endCoords: Coordinates | null = positionToCoordinates(clickedPosition);
-            if (startCoords && endCoords && Math.abs(startCoords.rankIndex - endCoords.rankIndex) === 2) {
+            const startCoords: Coordinates | null =
+              positionToCoordinates(startPosition);
+            const endCoords: Coordinates | null =
+              positionToCoordinates(clickedPosition);
+            if (
+              startCoords &&
+              endCoords &&
+              Math.abs(startCoords.rankIndex - endCoords.rankIndex) === 2
+            ) {
               const direction: 1 | -1 = movedPiece.color === 'white' ? 1 : -1;
               nextEnPassantTarget = coordinatesToPosition({
                 fileIndex: startCoords.fileIndex,
@@ -171,14 +234,36 @@ export const Chessboard: Component<ChessboardProps> = ({
           }
           setEnPassantTarget(nextEnPassantTarget);
 
+          /*if (movedPiece.type === "pawn") {
+            const endCoords: Coordinates | null = positionToCoordinates(clickedPosition);
+            if (endCoords && (endCoords.rankIndex === 0 || endCoords.rankIndex === 7)) {
+              // TODO: Promotion select
+              const promotionChoice: PieceType = "queen";
+              const promotedPiece: Piece = getPromotedPiece(promotionChoice, turn());
+
+              const pieceMapAfterPromotion: Partial<Record<PiecePositionAlgebraic, Piece | undefined>> = pieceMap();
+
+            }
+          }*/
 
           setPieceMap(nextPieceMap);
           setSelectedPiece(undefined);
-          setTurn(togglePieceColor(turn()));
+          const nextTurn: PieceColor = togglePieceColor(turn());
+          setTurn(nextTurn);
+          if (nextTurn !== orientation()) {
+            setOrientation(togglePieceColor(orientation()));
+          }
 
-          // TODO: Handle Castling (move the rook) - needs more logic here or in Piece class
-          // TODO: Handle Pawn Promotion - check if pawn reached last rank
-          // TODO: Check for check/checkmate/stalemate after the move
+          const move: Move = {
+            piece: movedPiece,
+            from: startPosition,
+            to: clickedPosition,
+            capturedPiece: pieceToCapture,
+            isCastling: isCastling,
+            isEnPassant: clickedPosition === enPassantTarget(),
+          };
+
+          setMoves([...moves(), move]);
         } else {
           if (
             pieceOnClickedSquare() &&
@@ -195,104 +280,94 @@ export const Chessboard: Component<ChessboardProps> = ({
         setSelectedPiece(pieceOnClickedSquare());
       }
     }
+
+    // TODO: check for end of game
+    /*const nextOwnKingPosition: PiecePositionAlgebraic = ...;
+    const isCheck: boolean = isKingInCheck(nextPieceMap, nextOwnKingPosition);
+    const isCheckmate: boolean = isCheck && !hasValidMoves(nextPieceMap, nextOwnKingPosition);
+    const isStalemate: boolean = !isCheck && !hasValidMoves(nextPieceMap, nextOwnKingPosition);*/
   };
 
   return (
-    <div class="flex flex-row w-full h-full text-center items-center justify-center overflow-hidden">
-      <div class="w-8 h-[448px] flex flex-col items-center justify-around">
-        <For each={notation()?.ranks}>
-          {(rank: RankId) => (
-            <div class="w-14 h-full flex items-center justify-center text-xs text-gray-300">
-              {rank}
-            </div>
-          )}
+    <div class="relative w-[448px] h-[448px] min-w-[448px] min-h-[448px]">
+      <div
+        classList={{
+          'rotate-180': orientation() === 'black',
+        }}
+        class="bg-gray-300 grid grid-cols-8 grid-rows-8 transition-transform duration-1000 w-full h-full"
+      >
+        <For each={board()}>
+          {(square: Square) => {
+            const piecePositionAlgebraic: PiecePositionAlgebraic = `${square.file}${square.rank}`;
+            const piece = (): Piece | undefined =>
+              pieceMap()[piecePositionAlgebraic];
+            const isSelected = (): boolean =>
+              !!selectedPiece() &&
+              !!piece() &&
+              piece()?.position === selectedPiece()?.position;
+            /*const isValidMoveTarget = (): boolean => {
+              const sp = selectedPiece();
+              if (!sp) return false;
+              const ownKingPos: PiecePositionAlgebraic | null =
+                sp.color === 'white'
+                  ? whiteKingPosition()
+                  : blackKingPosition();
+              if (!ownKingPos) return false;
+              return sp
+                .getValidMoves(pieceMap(), ownKingPos, enPassantTarget())
+                .includes(piecePositionAlgebraic);
+            };*/
+
+            return (
+              <div
+                classList={{
+                  'bg-gray-500 text-white': square.even,
+                  'bg-gray-200 text-gray-900': !square.even,
+                  'outline outline-4 outline-slate-700 outline-offset-[-4px] z-10':
+                    isSelected(),
+                  'hover:outline hover:outline-2 hover:outline-slate-700 hover:outline-offset-[-2px]':
+                    !!piece() && piece()?.color === turn(),
+                }}
+                class="relative h-14 w-14 flex items-center justify-center text-xs cursor-pointer"
+                onClick={() => {
+                  if (
+                    selectedPiece() ||
+                    (piece() && piece()?.color === turn())
+                  ) {
+                    handleSquareClick(square);
+                  }
+                }}
+              >
+                <div
+                  classList={{
+                    'rotate-180': orientation() === 'black',
+                  }}
+                  class="transition-transform duration-1000 w-full h-full flex items-center justify-center"
+                >
+                  <div class="z-20">
+                    <Dynamic component={piece()?.image} />
+                  </div>
+
+                  <SquareOverlay
+                    selectedPiece={selectedPiece()}
+                    pieceMap={pieceMap()}
+                    piecePositionAlgebraic={piecePositionAlgebraic}
+                    ownKingPosition={
+                      turn() === 'white'
+                        ? whiteKingPosition()
+                        : blackKingPosition()
+                    }
+                    enPassantTarget={enPassantTarget()}
+                  />
+                </div>
+              </div>
+            );
+          }}
         </For>
       </div>
 
-      <div>
-        <div class="h-8 w-[448px] text-white" />
-
-        <div
-          classList={{
-            'rotate-180': orientation() === 'black',
-          }}
-          class="bg-gray-300 grid grid-cols-8 grid-rows-8 transition-transform duration-1000" // Added transition-transform
-        >
-          <For each={board()}>
-            {(square: Square) => {
-              const piecePositionAlgebraic: PiecePositionAlgebraic = `${square.file}${square.rank}`;
-              const piece = (): Piece | undefined => pieceMap()[piecePositionAlgebraic];
-              const isSelected = (): boolean =>
-                !!selectedPiece() && !!piece() && (piece()?.position === selectedPiece()?.position);
-              const isValidMoveTarget = (): boolean => {
-                const sp = selectedPiece();
-                if (!sp) return false;
-                const ownKingPos =
-                  sp.color === 'white'
-                    ? whiteKingPosition()
-                    : blackKingPosition();
-                if (!ownKingPos) return false;
-                return sp
-                  .getValidMoves(pieceMap(), ownKingPos, enPassantTarget())
-                  .includes(piecePositionAlgebraic);
-              };
-
-              return (
-                <div
-                  classList={{
-                    'bg-gray-500 text-white': square.even,
-                    'bg-gray-200 text-gray-900': !square.even,
-                    'outline outline-4 outline-blue-500 outline-offset-[-4px] z-10':
-                      isSelected(),
-                    'hover:outline hover:outline-2 hover:outline-gray-500 hover:outline-offset-[-2px]':
-                      !!piece() && piece()?.color === turn(),
-                  }}
-                  class="relative h-14 w-14 flex items-center justify-center text-xs cursor-pointer"
-                  onClick={() => {
-                    if (
-                      selectedPiece() ||
-                      (piece() && piece()?.color === turn())
-                    ) {
-                      handleSquareClick(square);
-                    }
-                  }}
-                >
-                  <div
-                    classList={{
-                      'rotate-180': orientation() === 'black',
-                    }}
-                    class="transition-transform duration-1000 w-full h-full flex items-center justify-center"
-                  >
-                    <div class="z-20">
-                      <Dynamic component={piece()?.image} />
-                    </div>
-
-                    <SquareOverlay
-                      selectedPiece={selectedPiece()}
-                      pieceMap={pieceMap()}
-                      piecePositionAlgebraic={piecePositionAlgebraic}
-                    />
-                  </div>
-                </div>
-              );
-            }}
-          </For>
-        </div>
-
-        <div class="h-8 w-full flex">
-          <For each={notation()?.files}>
-            {(file: FileId) => (
-              <div class="h-14 w-full flex pt-2 items-top justify-center text-center text-xs text-gray-300">
-                {file}
-              </div>
-            )}
-          </For>
-        </div>
-      </div>
-
-      <div class="w-8 h-[448px]" />
-
-      {/* TODO: Display captured pieces using capturedWhitePieces() and capturedBlackPieces() */}
+      <Notation notation={notation()} side="vertical" />
+      <Notation notation={notation()} side="horizontal" />
     </div>
   );
 };

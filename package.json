@@ -22,10 +22,10 @@
     "@types/bun": "latest"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.4",
+    "@tailwindcss/vite": "^4.1.5",
+    "lucide-solid": "^0.503.0",
     "solid-js": "^1.9.5",
-    "tailwindcss": "^4.1.4",
-    "uuid": "^11.1.0"
+    "tailwindcss": "^4.1.5"
   },
   "module": "index.ts"
 }
