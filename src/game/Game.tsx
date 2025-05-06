@@ -3,7 +3,7 @@ import { Chessboard } from '../chessboard/Chessboard';
 import { PieceColor, PiecePositionAlgebraic } from '../lib/types/pieces';
 import { ArrowDownUp, ChevronLeft, ChevronRight, House, RotateCcw } from 'lucide-solid';
 import { Piece } from '../lib/pieces/Piece';
-import { calculateEvaluation } from '../lib/utils/utils';
+import { calculateEvaluation, resolvePlayerColor } from '../lib/utils/utils';
 import { Evaluation, Move } from '../lib/types/chessboard';
 import { initialEvaluation, initialPieceMap } from '../lib/board/Board';
 import { EvaluationBar } from '../chessboard/EvaluationBar';
@@ -11,7 +11,7 @@ import { PlayerDisplay } from '../chessboard/PlayerDisplay';
 import { CapturedPiecesDisplay } from '../chessboard/CapturedPiecesDisplay';
 import { MoveList } from '../chessboard/MoveList';
 import { Button } from '../components/ui/button';
-import { A } from '@solidjs/router';
+import { A, useSearchParams } from '@solidjs/router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { GameVariant } from '@/lib/types/game';
 
@@ -20,7 +20,11 @@ interface GameProps {
 }
 
 const Game: Component<GameProps> = (props: GameProps) => {
-    const [orientation, setOrientation] = createSignal<PieceColor>('white');
+    const [searchParams] = useSearchParams();
+    const colorChoice: PieceColor | "random" = searchParams.color as PieceColor | "random" ?? "random";
+    const playersColor = resolvePlayerColor(colorChoice);
+
+    const [orientation, setOrientation] = createSignal<PieceColor>(playersColor);
     const [turn, setTurn] = createSignal<PieceColor>("white");
     const [pieceMap, setPieceMap] =
         createSignal<Partial<Record<PiecePositionAlgebraic, Piece | undefined>>>(
@@ -48,7 +52,7 @@ const Game: Component<GameProps> = (props: GameProps) => {
     };
 
     const resetBoard = () => {
-        setOrientation("white");
+        setOrientation(playersColor);
         setTurn("white");
         setPieceMap(initialPieceMap);
         setMoves([]);

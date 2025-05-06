@@ -19,7 +19,6 @@ render(
       <Route path="/" component={App} />
       <Route path="/player-vs-bot/" component={() => <Game variant="player-vs-bot" />} />
       <Route path="/player-vs-player" component={() => <Game variant="player-vs-player" />} />
-      {/*<Route path="/online" component={Game} />*/}
     </Router>
   ), root!
 );

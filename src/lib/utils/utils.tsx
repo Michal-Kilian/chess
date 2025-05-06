@@ -14,6 +14,7 @@ import { BlackKnight } from '../icons/black-knight';
 import { WhitePawn } from '../icons/white-pawn';
 import { BlackPawn } from '../icons/black-pawn';
 import { knownOpenings } from '../board/Board';
+import { MoveSoundType } from '../audio-player/AudioPlayer';
 
 const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -183,4 +184,28 @@ export const detectChessOpening = (moves: Array<Move>) => {
   }
 
   return null;
+};
+
+export const resolvePlayerColor = (colorChoice: PieceColor | "random") => {
+  const colors: Array<PieceColor> = ["white", "black"];
+  if (colorChoice === "random") {
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+  return colorChoice;
+};
+
+export const resolveMoveToSound = (move: Move): MoveSoundType => {
+  switch (true) {
+    case !!move.capturedPiece:
+      return "capture";
+    case move.isCastling:
+      return "castle";
+    case !!move.promotion:
+      return "promote";
+    /* TODO: check in move */
+    /* case move.check:
+      return "check";*/
+    default:
+      return "move";
+  };
 };

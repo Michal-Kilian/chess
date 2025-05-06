@@ -24,10 +24,13 @@ import {
   findKingPosition,
   getInitialSquares,
   getNotation,
+  resolveMoveToSound,
   togglePieceColor,
 } from '../lib/utils/utils';
 import { SquareOverlay } from '../components/square-overlay';
 import { Notation } from './Notation';
+import { playMoveSound } from '@/lib/audio-player/AudioPlayer';
+import { Pawn } from '@/lib/pieces/Pawn';
 
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
@@ -267,6 +270,8 @@ export const Chessboard: Component<ChessboardProps> = ({
           };
 
           setMoves([...moves(), move]);
+
+          playMoveSound(resolveMoveToSound(move));
         } else {
           if (
             pieceOnClickedSquare() &&

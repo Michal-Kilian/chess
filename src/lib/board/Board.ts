@@ -7,6 +7,8 @@ import { Queen } from '../pieces/Queen';
 import { King } from '../pieces/King';
 import { Pawn } from '../pieces/Pawn';
 import { Evaluation, Opening } from '../types/chessboard';
+import { TimeFormat } from '../types/game';
+import { createUniqueId } from 'solid-js';
 
 export const initialPieceMap: Partial<
   Record<PiecePositionAlgebraic, Piece | undefined>
@@ -146,3 +148,34 @@ export const knownOpenings: Record<string, Opening> = {
     moves: ['d4', 'Nf6', 'c4', 'g6', 'Nc3', 'Bg7', 'e4', 'd6'],
   },
 };
+
+export const timeFormats: Array<TimeFormat> = [
+  {
+    id: createUniqueId(),
+    type: "bullet",
+    title: "Bullet",
+    seconds: 60,
+    increment: 0,
+  } satisfies TimeFormat,
+  {
+    id: createUniqueId(),
+    type: "blitz",
+    title: "Blitz",
+    seconds: 180,
+    increment: 0,
+  } satisfies TimeFormat,
+  {
+    id: createUniqueId(),
+    type: "rapid",
+    title: "Rapid",
+    seconds: 600,
+    increment: 0,
+  } satisfies TimeFormat,
+  {
+    id: createUniqueId(),
+    type: "standard",
+    title: "Standard",
+    seconds: 3600,
+    increment: 0,
+  } satisfies TimeFormat,
+] satisfies Array<TimeFormat>;
