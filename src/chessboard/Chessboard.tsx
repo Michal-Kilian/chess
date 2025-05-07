@@ -29,14 +29,15 @@ import {
 } from '../lib/utils/utils';
 import { SquareOverlay } from '../components/square-overlay';
 import { Notation } from './Notation';
-import { playMoveSound } from '@/lib/audio-player/AudioPlayer';
-import { Pawn } from '@/lib/pieces/Pawn';
+import { AudioPlayer } from '@/lib/audio-player/AudioPlayer';
+import { Rook } from '@/lib/pieces/Rook';
 
 interface ChessboardProps {
   orientation: Accessor<PieceColor>;
   setOrientation: Setter<PieceColor>;
-  turn: Accessor<PieceColor>;
-  setTurn: Setter<PieceColor>;
+  turn: Accessor<PieceColor | "none">;
+  setTurn: Setter<PieceColor | "none">;
+  playersColor: PieceColor;
   pieceMap: Accessor<
     Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
   >;
@@ -53,9 +54,10 @@ interface ChessboardProps {
 
 export const Chessboard: Component<ChessboardProps> = ({
   orientation,
-  setOrientation,
+  // setOrientation,
   turn,
   setTurn,
+  playersColor,
   pieceMap,
   moves,
   setMoves,
@@ -143,26 +145,45 @@ export const Chessboard: Component<ChessboardProps> = ({
               setBlackKingPosition(clickedPosition);
             }
 
-            // TODO: Rook moves when castling
-            /*const rookStartPosition = coordinatesToPosition({
-              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? 7 : 0,
-              rankIndex: endCoords.rankIndex,
-            });
-            const rookEndPosition = coordinatesToPosition({
-              fileIndex: endCoords.fileIndex > startCoords.fileIndex ? endCoords.fileIndex - 1 : endCoords.fileIndex + 1,
-              rankIndex: endCoords.rankIndex,
-            });
-            if (rookStartPosition && rookEndPosition) {
-              const rook: Piece | undefined = nextPieceMap[rookStartPosition];
-              if (rook && rook.type === 'rook' && rook.color === movedPiece.color) {
-                const nextRook: Rook = rook.clone();
-                nextRook.position = rookEndPosition;
-                nextRook.hasMoved = true;
-                nextPieceMap[rookStartPosition] = undefined;
-                nextPieceMap[rookEndPosition] = nextRook;
-                isCastling = true;
+            const startCoords: Coordinates | null =
+              positionToCoordinates(startPosition);
+            const endCoords: Coordinates | null =
+              positionToCoordinates(clickedPosition);
+
+            if (
+              startCoords &&
+              endCoords &&
+              Math.abs(startCoords.fileIndex - endCoords.fileIndex) === 2
+            ) {
+              const rookStartPosition = coordinatesToPosition({
+                fileIndex: endCoords.fileIndex > startCoords.fileIndex ? 7 : 0,
+                rankIndex: endCoords.rankIndex,
+              });
+              const rookEndPosition = coordinatesToPosition({
+                fileIndex:
+                  endCoords.fileIndex > startCoords.fileIndex
+                    ? endCoords.fileIndex - 1
+                    : endCoords.fileIndex + 1,
+                rankIndex: endCoords.rankIndex,
+              });
+
+              if (rookStartPosition && rookEndPosition) {
+                const rook: Piece | undefined = nextPieceMap[rookStartPosition];
+
+                if (
+                  rook &&
+                  rook.type === 'rook' &&
+                  rook.color === movedPiece.color
+                ) {
+                  const nextRook: Rook = rook.clone();
+                  nextRook.position = rookEndPosition;
+                  nextRook.hasMoved = true;
+                  nextPieceMap[rookStartPosition] = undefined;
+                  nextPieceMap[rookEndPosition] = nextRook;
+                  isCastling = true;
+                }
               }
-            }*/
+            }
           }
 
           if (pieceToCapture) {
@@ -254,7 +275,7 @@ export const Chessboard: Component<ChessboardProps> = ({
 
           setPieceMap(nextPieceMap);
           setSelectedPiece(undefined);
-          const nextTurn: PieceColor = togglePieceColor(turn());
+          const nextTurn: PieceColor | "none" = togglePieceColor(turn());
           setTurn(nextTurn);
           /*if (nextTurn !== orientation()) {
             setOrientation(togglePieceColor(orientation()));
@@ -271,7 +292,7 @@ export const Chessboard: Component<ChessboardProps> = ({
 
           setMoves([...moves(), move]);
 
-          playMoveSound(resolveMoveToSound(move));
+          AudioPlayer.playSound(resolveMoveToSound(move, playersColor));
         } else {
           if (
             pieceOnClickedSquare() &&

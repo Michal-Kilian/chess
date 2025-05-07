@@ -1,12 +1,13 @@
-import { Component } from 'solid-js';
+import { Component, JSX } from 'solid-js';
 
-export const WhiteBishop: Component = () => {
+export const WhiteBishop: Component<JSX.SvgSVGAttributes<SVGSVGElement>> = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 45 45"
       width="45"
       height="45"
+      {...props}
     >
       <g
         fill="none"

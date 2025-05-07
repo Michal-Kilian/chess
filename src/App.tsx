@@ -1,22 +1,27 @@
-import { Component, createSignal, For, Show } from "solid-js";
+import { Component, createSignal, Show } from "solid-js";
 import { Card, CardContent } from "./components/ui/card";
-import { ArrowLeft, ArrowRight, Bot, Play, UserRound } from "lucide-solid";
+import { ArrowLeft, Bot, Play, UserRound } from "lucide-solid";
 import { GameVariant, TimeFormat } from "./lib/types/game";
 import { Button } from "./components/ui/button";
 import { A } from "@solidjs/router";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./components/ui/tooltip";
 import { PieceColor } from "./lib/types/pieces";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
-import { timeFormats } from "./lib/board/Board";
+import { defaultTimeFormat, timeFormats, timeFormatsIds } from "./lib/board/Board";
 import { TimeFormatIcon } from "./lib/icons/TimeFormatIcon";
+import { TimeFormatSelect } from "./components/time-format-select";
 
 const App: Component = () => {
   const [selectedGameMode, setSelectedGameMode] = createSignal<GameVariant | undefined>(undefined);
-  const [selectedTimeFormat, setSelectedTimeFormat] = createSignal<TimeFormat | undefined>(undefined);
+  const [selectedTimeFormat, setSelectedTimeFormat] = createSignal<TimeFormat>(defaultTimeFormat);
   const [selectedPieceColor, setSelectedPieceColor] = createSignal<PieceColor | "random">("random");
 
   const constructGameLink = () => {
-    return "/" + selectedGameMode() + "?color=" + selectedPieceColor();
+    const params = new URLSearchParams({
+      color: selectedPieceColor(),
+      time: selectedTimeFormat().seconds.toString(),
+      increment: selectedTimeFormat().increment.toString(),
+    });
+    return "/" + selectedGameMode() + "?" + params.toString();
   };
 
   return (
@@ -72,7 +77,10 @@ const App: Component = () => {
                 <UserRound class="w-8 h-8" />
               </div>
 
-
+              <TimeFormatSelect
+                selectedTimeFormat={selectedTimeFormat}
+                setSelectedTimeFormat={setSelectedTimeFormat}
+              />
 
               <div class="flex flex-col items-center justify-center gap-y-5 w-full mb-12">
                 <span class="text-slate-400 font-medium text-sm w-full text-center">Play as</span>
@@ -136,6 +144,12 @@ const App: Component = () => {
                 <div class="text-sm">vs</div>
                 <UserRound class="w-8 h-8" />
               </div>
+
+              <TimeFormatSelect
+                selectedTimeFormat={selectedTimeFormat}
+                setSelectedTimeFormat={setSelectedTimeFormat}
+              />
+
               <A href={constructGameLink()}>
                 <Button
                   variant="default"

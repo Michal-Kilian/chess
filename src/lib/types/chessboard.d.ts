@@ -24,6 +24,8 @@ export type Move = {
   promotion?: PieceType;
   isCastling: boolean;
   isEnPassant: boolean;
+  isPremove?: boolean;
+  isCheck?: boolean;
 };
 
 export type Opening = {

@@ -1,3 +1,5 @@
+import { PieceColor } from "./pieces";
+
 export type GameVariant =
     | "player-vs-bot"
     | "player-vs-player";
@@ -14,4 +16,10 @@ export type TimeFormat = {
     title: string;
     seconds: number;
     increment: number;
+};
+
+export type Player = {
+    id: string;
+    username: string;
+    color: PieceColor;
 };

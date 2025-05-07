@@ -103,7 +103,7 @@ export class King extends Piece {
     }
 
     return moves;
-  }
+  };
 
   getValidMoves(
     pieceMap: Partial<Record<PiecePositionAlgebraic, Piece | undefined>>
@@ -119,23 +119,18 @@ export class King extends Piece {
 
     for (const moveToTry of potentialMoves) {
       if (
-        moveToTry === kingSideCastleTarget ||
-        moveToTry === queenSideCastleTarget
+        moveToTry !== kingSideCastleTarget &&
+        moveToTry !== queenSideCastleTarget
       ) {
-        continue;
-      }
+        const targetIsAttacked: boolean = isSquareAttacked(
+          moveToTry,
+          opponentColor,
+          pieceMap
+        );
 
-      const tempPieceMap = { ...pieceMap };
-      delete tempPieceMap[this.position];
-
-      const targetIsAttacked: boolean = isSquareAttacked(
-        moveToTry,
-        opponentColor,
-        tempPieceMap
-      );
-
-      if (!targetIsAttacked) {
-        validMoves.push(moveToTry);
+        if (!targetIsAttacked) {
+          validMoves.push(moveToTry);
+        }
       }
     }
 
@@ -156,6 +151,7 @@ export class King extends Piece {
         if (canPotentiallyCastleKingSide) {
           const fSquare = `F${rank}` as PiecePositionAlgebraic;
           const gSquare = `G${rank}` as PiecePositionAlgebraic;
+
           const fSquareAttacked: boolean = isSquareAttacked(
             fSquare,
             opponentColor,
@@ -174,6 +170,7 @@ export class King extends Piece {
         if (canPotentiallyCastleQueenSide) {
           const cSquare = `C${rank}` as PiecePositionAlgebraic;
           const dSquare = `D${rank}` as PiecePositionAlgebraic;
+
           const cSquareAttacked = isSquareAttacked(
             cSquare,
             opponentColor,
@@ -198,5 +195,5 @@ export class King extends Piece {
     clonedPiece.hasMoved = this.hasMoved;
     clonedPiece.captured = this.captured;
     return clonedPiece as this;
-  }
-}
+  };
+};

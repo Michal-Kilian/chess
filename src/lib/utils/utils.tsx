@@ -48,8 +48,8 @@ export const getNotation = (orientation: PieceColor) => {
   };
 };
 
-export const togglePieceColor = (pieceColor: PieceColor): PieceColor => {
-  return pieceColor === 'white' ? 'black' : 'white';
+export const togglePieceColor = (pieceColor: PieceColor | "none"): PieceColor | "none" => {
+  return pieceColor === 'white' ? 'black' : pieceColor === "black" ? 'white' : "none";
 };
 
 export const isSquareAttacked = (
@@ -194,7 +194,7 @@ export const resolvePlayerColor = (colorChoice: PieceColor | "random") => {
   return colorChoice;
 };
 
-export const resolveMoveToSound = (move: Move): MoveSoundType => {
+export const resolveMoveToSound = (move: Move, color: PieceColor): MoveSoundType => {
   switch (true) {
     case !!move.capturedPiece:
       return "capture";
@@ -202,10 +202,11 @@ export const resolveMoveToSound = (move: Move): MoveSoundType => {
       return "castle";
     case !!move.promotion:
       return "promote";
-    /* TODO: check in move */
-    /* case move.check:
-      return "check";*/
+    case color === move.piece.color:
+      return "moveSelf";
+    case color !== move.piece.color:
+      return "moveOpponent";
     default:
-      return "move";
+      return "moveSelf";
   };
 };
