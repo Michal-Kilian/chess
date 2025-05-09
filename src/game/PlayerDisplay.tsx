@@ -15,15 +15,11 @@ export const PlayerDisplay: Component<PlayerDisplayProps> = (
     return (
         <div class="flex flex-row items-center justify-between w-full">
             <div class="flex flex-row items-center gap-x-3 justify-start">
-                <label class="text-slate-200">{props.playerName}</label>
+                <label class="text-foreground">{props.playerName}</label>
                 <Show
-                    when={
-                        props.color === 'white'
-                            ? props.evaluation()!.whiteMaterialDifference !== 0
-                            : props.evaluation()!.blackMaterialDifference !== 0
-                    }
+                    when={props.evaluation().winning !== "equal"}
                 >
-                    <span class="text-slate-500 font-medium">
+                    <span class="text-muted-foreground font-medium">
                         {displayEvaluation(
                             props.color === 'white'
                                 ? props.evaluation()!.whiteMaterialDifference

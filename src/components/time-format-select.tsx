@@ -1,11 +1,9 @@
 import { Accessor, Component, Match, Setter, Show, Switch } from 'solid-js';
-// Removed unused Select imports:
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { timeFormats } from '@/lib/board/Board'; // Assuming timeFormats is imported from here
+import { timeFormats } from '@/lib/configuration/Configuration';
 import { TimeFormat } from '@/lib/types/game';
 import { TimeFormatIcon } from '@/lib/icons/TimeFormatIcon';
 import { ChevronDown, ChevronUp } from 'lucide-solid';
-import { Properties } from 'solid-js/web';
+import { getFormattedTime } from '@/lib/utils/utils';
 
 interface TimeFormatSelectProps {
     selectedTimeFormat: Accessor<TimeFormat>;
@@ -62,7 +60,7 @@ export const TimeFormatSelect: Component<TimeFormatSelectProps> = (
                     {props.selectedTimeFormat().title}
                 </span>
                 <div class="text-slate-400 text-sm text-right">
-                    {(props.selectedTimeFormat().seconds / 60).toString() + ' Min'}
+                    {getFormattedTime(props.selectedTimeFormat().seconds)}
                     <Show when={props.selectedTimeFormat().increment > 0}>
                         {"+" + props.selectedTimeFormat().increment.toString()}
                     </Show>

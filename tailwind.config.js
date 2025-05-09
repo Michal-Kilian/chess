@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["variant", [".dark &", '[data-kb-theme="dark"] &']],
   content: ["./src/**/*.{ts,tsx}"],

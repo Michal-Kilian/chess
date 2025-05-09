@@ -1,9 +1,7 @@
 import { render } from 'solid-js/web';
 
 import './index.css';
-import { Route, Router } from '@solidjs/router';
 import App from './App';
-import Game from './game/Game';
 
 const root = document.getElementById('root');
 
@@ -14,11 +12,5 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(
-  () => (
-    <Router>
-      <Route path="/" component={App} />
-      <Route path="/player-vs-bot/" component={() => <Game variant="player-vs-bot" />} />
-      <Route path="/player-vs-player" component={() => <Game variant="player-vs-player" />} />
-    </Router>
-  ), root!
+  () => <App />, root!
 );

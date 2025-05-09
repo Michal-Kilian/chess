@@ -7,32 +7,50 @@
 
 @layer base {
     :root {
-        --color-background: hsl(0 0% 100%);
-        --color-foreground: hsl(240 10% 3.9%);
+        --color-background: oklch(0.984 0.003 247.858);
+        /* slate-50 */
+        --color-foreground: oklch(0.129 0.042 264.695);
+        /* slate-950 */
 
-        --color-muted: hsl(240 4.8% 95.9%);
-        --color-muted-foreground: hsl(240 3.8% 46.1%);
+        --color-muted: oklch(0.929 0.013 255.508);
+        /* slate-200 */
+        --color-muted-foreground: oklch(0.446 0.043 257.281);
+        /* slate-600 */
 
-        --color-popover: hsl(0 0% 100%);
-        --color-popover-foreground: hsl(240 10% 3.9%);
+        --color-popover: oklch(0.984 0.003 247.858);
+        /* slate-50 */
+        --color-popover-foreground: oklch(0.129 0.042 264.695);
+        /* slate-950 */
 
-        --color-border: hsl(240 5.9% 90%);
-        --color-input: hsl(240 5.9% 90%);
+        --color-border: oklch(0.869 0.022 252.894);
+        /* slate-300 */
+        --color-input: oklch(0.869 0.022 252.894);
+        /* slate-300 */
 
-        --color-card: hsl(0 0% 100%);
-        --color-card-foreground: hsl(240 10% 3.9%);
+        --color-card: oklch(0.984 0.003 247.858);
+        /* slate-50 */
+        --color-card-foreground: oklch(0.129 0.042 264.695);
+        /* slate-950 */
 
-        --color-primary: hsl(240 5.9% 10%);
-        --color-primary-foreground: hsl(0 0% 98%);
+        --color-primary: oklch(0.208 0.042 265.755);
+        /* slate-900 */
+        --color-primary-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
-        --color-secondary: hsl(240 4.8% 95.9%);
-        --color-secondary-foreground: hsl(240 5.9% 10%);
+        --color-secondary: oklch(0.929 0.013 255.508);
+        /* slate-200 */
+        --color-secondary-foreground: oklch(0.208 0.042 265.755);
+        /* slate-900 */
 
-        --color-accent: hsl(240 4.8% 95.9%);
-        --color-accent-foreground: hsl(240 5.9% 10%);
+        --color-accent: oklch(0.929 0.013 255.508);
+        /* slate-200 */
+        --color-accent-foreground: oklch(0.208 0.042 265.755);
+        /* slate-900 */
 
+        /* Semantic colors (keeping original HSL unless you want slate variants) */
         --color-destructive: hsl(0 84.2% 60.2%);
         --color-destructive-foreground: hsl(0 0% 98%);
+        /* white equivalent */
 
         --color-info: hsl(204 94% 94%);
         --color-info-foreground: hsl(199 89% 48%);
@@ -46,37 +64,56 @@
         --color-error: hsl(0 93% 94%);
         --color-error-foreground: hsl(0 84% 60%);
 
-        --color-ring: hsl(240 5.9% 10%);
+        --color-ring: oklch(0.704 0.04 256.788);
+        /* slate-400 */
     }
 
     .dark,
     [data-kb-theme="dark"] {
-        --color-background: hsl(240 10% 3.9%);
-        --color-foreground: hsl(0 0% 98%);
+        --color-background: oklch(0.208 0.042 265.755);
+        /* slate-950 */
+        --color-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
-        --color-muted: hsl(240 3.7% 15.9%);
-        --color-muted-foreground: hsl(240 5% 64.9%);
+        --color-muted: oklch(0.279 0.041 260.031);
+        /* slate-800 */
+        --color-muted-foreground: oklch(0.704 0.04 256.788);
+        /* slate-400 */
 
-        --color-accent: hsl(240 3.7% 15.9%);
-        --color-accent-foreground: hsl(0 0% 98%);
+        --color-accent: oklch(0.279 0.041 260.031);
+        /* slate-800 */
+        --color-accent-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
-        --color-popover: hsl(240 10% 3.9%);
-        --color-popover-foreground: hsl(0 0% 98%);
+        --color-popover: oklch(0.129 0.042 264.695);
+        /* slate-950 */
+        --color-popover-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
-        --color-border: hsl(240 3.7% 15.9%);
-        --color-input: hsl(240 3.7% 15.9%);
+        --color-border: oklch(0.279 0.041 260.031);
+        /* slate-800 */
+        --color-input: oklch(0.279 0.041 260.031);
+        /* slate-800 */
 
-        --color-card: hsl(240 10% 3.9%);
-        --color-card-foreground: hsl(0 0% 98%);
+        --color-card: oklch(0.129 0.042 264.695);
+        /* slate-950 */
+        --color-card-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
-        --color-primary: hsl(0 0% 98%);
-        --color-primary-foreground: hsl(240 5.9% 10%);
+        --color-primary: oklch(0.984 0.003 247.858);
+        /* slate-50 */
+        --color-primary-foreground: oklch(0.208 0.042 265.755);
+        /* slate-900 */
 
-        --color-secondary: hsl(240 3.7% 15.9%);
-        --color-secondary-foreground: hsl(0 0% 98%);
+        --color-secondary: oklch(0.279 0.041 260.031);
+        /* slate-800 */
+        --color-secondary-foreground: oklch(0.984 0.003 247.858);
+        /* slate-50 */
 
+        /* Semantic colors (keeping original HSL unless you want slate variants) */
         --color-destructive: hsl(0 62.8% 30.6%);
         --color-destructive-foreground: hsl(0 0% 98%);
+        /* white equivalent */
 
         --color-info: hsl(226.2 57% 21%);
         --color-info-foreground: hsl(199 89% 48%);
@@ -90,7 +127,8 @@
         --color-error: hsl(0 74.7% 15.5%);
         --color-error-foreground: hsl(0 84% 60%);
 
-        --color-ring: hsl(240 4.9% 83.9%);
+        --color-ring: oklch(0.446 0.043 257.281);
+        /* slate-600 */
     }
 
     * {
@@ -264,4 +302,9 @@
         @apply ml-[-50px] mt-[-4px];
         content: counter(step);
     }
+}
+
+@utility bg-pattern-stripes {
+    background-color: #e5e7eb;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='1' viewBox='0 0 40 1' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v1H0z' fill='%236b7280' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
 }

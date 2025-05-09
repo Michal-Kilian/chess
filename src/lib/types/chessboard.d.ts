@@ -33,16 +33,6 @@ export type Opening = {
   moves: Array<string>;
 };
 
-export type GameStatus =
-  | 'ongoing'
-  | 'check'
-  | 'checkmate_white_wins'
-  | 'checkmate_black_wins'
-  | 'stalemate'
-  | 'draw_insufficient_material'
-  | 'draw_fifty_move'
-  | 'draw_threefold_repetition';
-
 export interface Coordinates {
   fileIndex: number;
   rankIndex: number;

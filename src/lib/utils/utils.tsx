@@ -13,8 +13,9 @@ import { WhiteKnight } from '../icons/white-knight';
 import { BlackKnight } from '../icons/black-knight';
 import { WhitePawn } from '../icons/white-pawn';
 import { BlackPawn } from '../icons/black-pawn';
-import { knownOpenings } from '../board/Board';
+import { knownOpenings } from '../configuration/Configuration';
 import { MoveSoundType } from '../audio-player/AudioPlayer';
+import { useColorMode } from '@kobalte/core';
 
 const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -209,4 +210,29 @@ export const resolveMoveToSound = (move: Move, color: PieceColor): MoveSoundType
     default:
       return "moveSelf";
   };
+};
+
+export const getFormattedTime = (seconds: number): string => {
+  if (seconds === 0) {
+    return "0 Sec";
+  }
+
+  const parts: Array<string> = [];
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (hours > 0) {
+    parts.push(`${hours} Hour`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} Min`);
+  }
+
+  if (remainingSeconds > 0) {
+    parts.push(`${remainingSeconds} Sec`);
+  }
+
+  return parts.join(" ");
 };

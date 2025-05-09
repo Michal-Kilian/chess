@@ -16,7 +16,7 @@ export const EvaluationBar: Component<EvaluationBarProps> = (
 ) => {
     return (
         <div
-            class="relative w-8 h-full rounded-full border-2 border-slate-800 overflow-hidden transition-all duration-1000"
+            class="relative w-8 h-full rounded-full border-2 border-slate-800 overflow-hidden transition-all duration-1000 shadow-md"
             style={{
                 background: `linear-gradient(to top, 
           ${props.orientation() === 'white' ? 'white' : 'black'} 0%, 

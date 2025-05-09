@@ -14,7 +14,7 @@ export const CapturedPiecesDisplay: Component<CapturedPiecesDisplayProps> = (
   const pieceOrder: Array<PieceType> = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king'];
 
   const groupedPieces = () => {
-    const groups: Record<PieceType, Piece[]> = {
+    const groups: Record<PieceType, Array<Piece>> = {
       pawn: [],
       knight: [],
       bishop: [],
@@ -30,16 +30,6 @@ export const CapturedPiecesDisplay: Component<CapturedPiecesDisplayProps> = (
     });
 
     return groups;
-  };
-
-  const maxStackSize = () => {
-    let max = 0;
-    for (const type in groupedPieces()) {
-      if (groupedPieces()[type as PieceType]) {
-        max = Math.max(max, groupedPieces()[type as PieceType].length);
-      }
-    }
-    return max;
   };
 
   const overlapAmountPx = 6;

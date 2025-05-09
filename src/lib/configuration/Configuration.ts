@@ -7,7 +7,7 @@ import { Queen } from '../pieces/Queen';
 import { King } from '../pieces/King';
 import { Pawn } from '../pieces/Pawn';
 import { Evaluation, Opening } from '../types/chessboard';
-import { TimeFormat, TimeFormatType } from '../types/game';
+import { TimeFormat } from '../types/game';
 import { createUniqueId } from 'solid-js';
 
 export const initialPieceMap: Partial<
@@ -153,6 +153,13 @@ export const timeFormats: Array<TimeFormat> = [
   {
     id: createUniqueId(),
     type: "bullet",
+    title: "Dev",
+    seconds: 10,
+    increment: 0,
+  } satisfies TimeFormat,
+  {
+    id: createUniqueId(),
+    type: "bullet",
     title: "Bullet",
     seconds: 60,
     increment: 0,
@@ -180,5 +187,4 @@ export const timeFormats: Array<TimeFormat> = [
   } satisfies TimeFormat,
 ] satisfies Array<TimeFormat>;
 
-export const timeFormatsIds: Array<string> = timeFormats.map(timeFormat => timeFormat.id);
-export const defaultTimeFormat: TimeFormat = timeFormats[2];
+export const defaultTimeFormat: TimeFormat = timeFormats[0];

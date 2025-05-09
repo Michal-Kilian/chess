@@ -318,7 +318,7 @@ export const Chessboard: Component<ChessboardProps> = ({
   };
 
   return (
-    <div class="relative w-[448px] h-[448px] min-w-[448px] min-h-[448px]">
+    <div class="relative w-[448px] h-[448px] min-w-[448px] min-h-[448px] shadow-md">
       <div
         classList={{
           'rotate-180': orientation() === 'black',
