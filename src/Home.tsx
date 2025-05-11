@@ -1,17 +1,58 @@
-import { Component, createSignal, Show } from "solid-js";
+import { Component, createSignal, createUniqueId, Match, onCleanup, Show, Switch } from "solid-js";
 import { Card, CardContent } from "./components/ui/card";
-import { ArrowLeft, Bot, Play, UserRound } from "lucide-solid";
+import { ArrowLeft, Bot, LogIn, LogOut, Menu, Play, Settings, UserRound, UserRoundPlus } from "lucide-solid";
 import { GameVariant, TimeFormat } from "./lib/types/game";
 import { Button } from "./components/ui/button";
 import { A } from "@solidjs/router";
 import { PieceColor } from "./lib/types/pieces";
 import { defaultTimeFormat } from "./lib/configuration/Configuration";
 import { TimeFormatSelect } from "./components/time-format-select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./components/ui/tooltip";
+import { User } from "./lib/types/user";
+import { getUser, signOut } from "./lib/utils/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
+import { MenuButtonType } from "./lib/types/generic";
 
 const Home: Component = () => {
+  const dummyUser: User = {
+    id: createUniqueId(),
+    username: "Jozef",
+    email: "jozef@jozef.sk",
+    password: "password",
+    rating: 1000,
+  };
+  localStorage.setItem("user", JSON.stringify(dummyUser));
+
+  const user: User | null = getUser();
+
   const [selectedGameMode, setSelectedGameMode] = createSignal<GameVariant | undefined>(undefined);
   const [selectedTimeFormat, setSelectedTimeFormat] = createSignal<TimeFormat>(defaultTimeFormat);
   const [selectedPieceColor, setSelectedPieceColor] = createSignal<PieceColor | "random">("random");
+
+  const [menuOpen, setMenuOpen] = createSignal(false);
+  const [leaveTimeout, setLeaveTimeout] = createSignal<NodeJS.Timeout | null>(null);
+  const [menuButtonHovered, setMenuButtonHovered] = createSignal<MenuButtonType | undefined>(undefined);
+
+  const handleAvatarMouseEnter = () => {
+    if (leaveTimeout()) {
+      clearTimeout(leaveTimeout()!);
+      setLeaveTimeout(null);
+    }
+    setMenuOpen(true);
+  };
+
+  const handleAvatarMouseLeave = () => {
+    const timeoutId = setTimeout(() => {
+      setMenuOpen(false);
+    }, 200);
+    setLeaveTimeout(timeoutId);
+  };
+
+  onCleanup(() => {
+    if (leaveTimeout()) {
+      clearTimeout(leaveTimeout()!);
+    }
+  });
 
   const constructGameLink = () => {
     const params = new URLSearchParams({
@@ -161,7 +202,111 @@ const Home: Component = () => {
             </div>
           </Show>
         </div>
-      </Show >
+      </Show>
+
+      <Show when={user} fallback={
+        <div class="absolute top-5 right-5 flex flex-row items-center justify-center gap-x-3">
+          <Tooltip>
+            <TooltipTrigger>
+              <A href="/signIn">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="cursor-pointer"
+                >
+                  <LogIn class="w-6 h-6" />
+                </Button>
+              </A>
+            </TooltipTrigger>
+            <TooltipContent>
+              Sign In
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger>
+              <A href="/signUp">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="cursor-pointer"
+                >
+                  <UserRoundPlus class="w-6 h-6" />
+                </Button>
+              </A>
+            </TooltipTrigger>
+            <TooltipContent>
+              Sign Up
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      }>
+        <div class="absolute top-8 right-8 text-center flex items-center justify-start gap-x-3">
+          <div class="flex flex-col items-start justify-center w-full h-full min-w-0">
+            <span class="truncate w-full font-medium text-right text-foreground">{user!.username}</span>
+            <span class="text-muted-foreground text-sm w-full text-right">{user!.email}</span>
+          </div>
+          <Avatar
+            class="cursor-pointer hover:rotate-360 duration-500"
+            classList={{
+              "rotate-360": menuOpen()
+            }}
+            onMouseEnter={handleAvatarMouseEnter}
+            onMouseLeave={handleAvatarMouseLeave}
+          >
+            <AvatarImage src="src/assets/avatars/avatar-example-2.png" />
+            <AvatarFallback />
+          </Avatar>
+        </div>
+      </Show>
+
+      <Show when={menuOpen()}>
+        <div
+          class="absolute top-20 right-7 flex flex-col items-end justify-center rounded-md p-1"
+          onMouseEnter={handleAvatarMouseEnter}
+          onMouseLeave={handleAvatarMouseLeave}
+        >
+          <Button
+            variant={"ghost"}
+            size={menuButtonHovered() === "play" ? "default" : "icon"}
+            class="cursor-pointer p-3"
+            onMouseEnter={() => setMenuButtonHovered("play")}
+            onMouseLeave={() => setMenuButtonHovered(undefined)}
+          >
+            <Show when={menuButtonHovered() === "play"}>
+              <div class="mr-2">Play</div>
+            </Show>
+            <Play class="w-6 h-6" />
+          </Button>
+
+          <Button
+            variant={"ghost"}
+            size={menuButtonHovered() === "settings" ? "default" : "icon"}
+            class="cursor-pointer p-3"
+            onMouseEnter={() => setMenuButtonHovered("settings")}
+            onMouseLeave={() => setMenuButtonHovered(undefined)}
+          >
+            <Show when={menuButtonHovered() === "settings"}>
+              <div class="mr-2">Settings</div>
+            </Show>
+            <Settings class="w-6 h-6" />
+          </Button>
+
+          <Button
+            variant={"ghost"}
+            size={menuButtonHovered() === "signOut" ? "default" : "icon"}
+            class="cursor-pointer p-3"
+            onMouseEnter={() => setMenuButtonHovered("signOut")}
+            onMouseLeave={() => setMenuButtonHovered(undefined)}
+            onClick={signOut}
+          >
+            <Show when={menuButtonHovered() === "signOut"}>
+              <div class="mr-2">Sign out</div>
+            </Show>
+            <LogOut class="w-6 h-6" />
+          </Button>
+        </div>
+      </Show>
     </div >
   );
 };

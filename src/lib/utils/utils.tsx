@@ -16,6 +16,7 @@ import { BlackPawn } from '../icons/black-pawn';
 import { knownOpenings } from '../configuration/Configuration';
 import { MoveSoundType } from '../audio-player/AudioPlayer';
 import { useColorMode } from '@kobalte/core';
+import { User } from '../types/user';
 
 const fileIds: Array<FileId> = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const rankIds: Array<RankId> = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -235,4 +236,16 @@ export const getFormattedTime = (seconds: number): string => {
   }
 
   return parts.join(" ");
+};
+
+export const getUser = (): User | null => {
+  const storedUser: string | null = localStorage.getItem("user");
+  if (storedUser) {
+    return JSON.parse(storedUser);
+  }
+  return null;
+};
+
+export const signOut = (): void => {
+  localStorage.removeItem("user");
 };
